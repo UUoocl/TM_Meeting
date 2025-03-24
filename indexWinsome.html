@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>UUinsone slide controls for MacOS</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <article class="contents">
+        <h1>UUinsome</h1>
+        <h4>An interface to connect OBS to PowerPoint and Keynote via macOS Shortcuts</h4>
+    
+        <section>
+            <div id="openOBS">
+                <h3>Open OBS</h3>
+                <form class="form-grid">
+                    <label for="obsName">Enter OBS app name:</label>
+                    <input type="text" id="obsName" name="obsName" value="OBS" />
+                    <label for="profileName">Enter OBS Profile name:</label>
+                    <input type="text" id="profileName" name="profileName" value="Untitled" />
+                    <label for="collectionName">Enter OBS Collection name:</label>
+                    <input type="text" id="collectionName" name="collectionName" value="Untitled" />
+                    <label for="IP">Enter IP address or "localhost":</label>
+                    <input type="text" id="IP" name="IP" value="localhost" />
+                    <label for="Port">Enter Port Number:</label>
+                    <input type="text" id="Port" name="Port" value="4455" />
+                    <label for="PW">Enter Password:</label>
+                    <input type="password" id="PW" name="PW" value="" />
+                    <p></p><input class="form-button" type="button" id="openOBSbutton" value="Open OBS" />
+                </form>
+            </div>
+        </section>
+        
+        <section>
+            <div id="srvr">
+                <h3>Connect to the OBS WebSocket Server</h3>
+                <form class="form-grid">
+                    <p></p><input class="form-button" type="button" id="WSconnectButton" value="Connect to OBS" />
+                </form>
+            </div>
+        </section>
+        
+        <section>
+            <div id="sheets">
+                <h3>Connect to a Google Sheet</h3>
+                <form class="form-grid">
+                    <label for="sheetID">Enter a Google Sheet ID:</label>
+                    <input type="text" id="sheetID" name="sheetID" value="" />
+                    <label for="sheetName">Enter a Sheet Name:</label>
+                    <input type="text" id="sheetName" name="sheetName" value="" />
+                    <label for="sheetRange">Enter a Sheet Range:</label>
+                    <input type="text" id="sheetRange" name="sheetRange" value="" />
+                    <p></p><input class="form-button" type="button" id="sheetConnectButton" value="Connect to Sheets" />
+                </form>
+            </div>
+        </section>
+    
+        <section>
+            <div id="slides">
+                <div id="slide-app">
+                    <h3>Presentation app</h3>
+                    <div class="radio-toolbar" style="font-size: 1.3em;">
+                        <input type="radio" name="appRadio" id="powerpoint-radio" value="PowerPoint" checked>
+                        <label for="powerpoint-radio">PowerPoint</label>
+    
+                        <input type="radio" name="appRadio" id="keynote-radio" value="Keynote">
+                        <label for="keynote-radio">Keynote</label>
+                    </div>
+                    <p>&nbsp;</p>
+                </div>
+            </div>
+        </section>
+    
+        <section>
+            <div id="navigation">
+                <div id="slide-navigation">
+                    <h3>Slide Show Navigation</h3>
+                    <form class="nav-grid">
+                        <input class="form-button" type="button" id="previousSlideButton" value="⬅️ Previous Slide" />
+                        <input class="form-button" type="button" id="CurrentSlideButton" value="Current slide 🔃" hidden />
+                        <input class="form-button" type="button" id="nextSlideButton" value="Next Slide ➡️" />
+                    </form>
+                </div>
+            </div>
+        </section>
+    
+        <section>
+            <div id="teleprompter">
+                <div id="text-teleprompter">
+                    <h3>Teleprompter Settings</h3>
+                    <form class="nav-grid">
+                        <input class="form-button" type="button" id="playPauseButton" value="Play" />
+                    </form>
+                    <form class="tele-grid">
+                        <p>Text Size</p>
+                        <input class="form-button" type="button" id="DecreaseSizeButton" value="decrease -" />
+                        <input type="text" id="sizeValue" name="sizeValue" value="1" />
+                        <input class="form-button" type="button" id="IncreaseSizeButton" value="increase +" />
+                    </form>
+                    <form class="tele-grid">
+                        <p>Scroll speed</p>
+                        <input class="form-button" type="button" id="DecreaseSpeedButton" value="decrease -" />
+                        <input type="text" id="speedValue" name="speedValue" value="1" />
+                        <input class="form-button" type="button" id="IncreaseSpeedButton" value="increase +" />
+                    </form>
+                </div>
+            </div>
+        </section>
+    
+        <section>
+            <div id="tags">
+                <div id="slide-tags">
+                    <h3>Slide Tags</h3>
+    
+                    <p>Scene</p>
+                    <ul id=sceneList>
+                    </ul>
+                    <p>Camera</p>
+                    <ul id=cameraList>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    
+        <section>
+            <div>
+                <h1>Apple Shortcuts Input</h1>
+                <div id="keynote-shortcuts">
+                    <p>Keynote Notes</p>
+                    <textarea id="keynoteNotes" style="height: 100px; width: 600px"></textarea>
+                </div>
+                <div id="powerPoint-shortcuts">
+                    <p>PowerPoint Notes</p>
+                    <textarea id="powerPointNotes" style="height: 100px; width: 600px"></textarea>
+                </div>
+        </section>
+    </article>
+    
+    <script src='lib/obs-ws.js'></script>
+    <script src='lib/obsConnect.js'></script>
+    <script>
+        let teleprompterSize,
+            teleprompterSpeed,
+            teleprompterIsPlaying = false,
+            controlSources = new Object(),
+            wssDetails;
+
+        document.addEventListener("DOMContentLoaded", (event) => {
+            if(localStorage.getItem("IP")){
+            document.getElementById("IP").value = localStorage.getItem("IP");
+            document.getElementById("Port").value = localStorage.getItem("Port");
+            document.getElementById("PW").value = localStorage.getItem("PW");  
+            document.getElementById("obsName").value = localStorage.getItem("obsName");  
+            document.getElementById("profileName").value = localStorage.getItem("profileName");  
+            document.getElementById("collectionName").value = localStorage.getItem("collectionName");  
+            }    
+            document
+                .getElementById("WSconnectButton")
+                .addEventListener("click", wsConnect);
+
+            document
+                .getElementById("sheetConnectButton")
+                .addEventListener("click", sheetsConnect);
+            });    
+            const obs = new OBSWebSocket();
+
+            async function wsConnect() {
+            let wssDetails = {
+                "IP": document.getElementById("IP").value,
+                "PORT": document.getElementById("Port").value,
+                "PW":document.getElementById("PW").value
+                };
+  
+            // Saves data to retrieve later
+            localStorage.setItem("IP", wssDetails.IP);
+            localStorage.setItem("Port", wssDetails.PORT);
+            localStorage.setItem("PW", wssDetails.PW);
+            localStorage.setItem("obsName", document.getElementById("obsName").value);
+            localStorage.setItem("profileName", document.getElementById("profileName").value);
+            localStorage.setItem("collectionName", document.getElementById("collectionName").value);
+            await connectOBS(wssDetails)
+            .then(async() => {
+                getScenes();
+                getSceneList();
+                getTeleprompterSize();
+                getTeleprompterSpeed();
+                getSlideControlSceneItems();
+                document.getElementById("WSconnectButton").style.background = "#00ff00";
+                
+                // await fetchWotD();
+                // await getWotD();
+                // let sceneItems = await obs.call("GetSceneItemList",{"sceneName" : "Input Voice to Text"})
+                // sceneItems = sceneItems.sceneItems;
+                // loadScript("lib/p5.js");
+                // loadScript("lib/BouncingWaveSketch.js"); 
+                // loadScript("lib/BouncingWaveText.js");
+                // loadScript("lib/BouncingWaveClass.js");
+                // loadScript("lib/easing.js"); 
+        
+                //send websocket server connection details to OBS browser source
+                await obs.call("CallVendorRequest", {
+                    vendorName: "obs-browser",
+                    requestType: "emit_event",
+                    requestData: {
+                        event_name: "ws-details",
+                        event_data: { wssDetails },
+                    },
+                });
+            })
+        }    
+
+        // window.addEventListener("load", (event) => {
+        //     console.log("page is fully loaded");
+        //     //getData();
+        //     //document.getElementById("clickTest").click()
+        //     const params = new URLSearchParams(window.location.search); //parse params
+        //     const pw = params.get("pw"); //get password param
+        //     const wd = params.get("wd"); //get working directory param
+        //     //assign pw value to input when loading
+        //     if(pw){
+        //         document.getElementById("PW").value = pw; 
+        //         document.getElementById("WSconnectButton").click(); 
+
+        //     }
+        //     if(wd){
+        //         document.getElementById("WorkingDirectory").innerHTML = wd; 
+        //     }
+        // });
+        //document.getElementById("clickTest").addEventListener('click', )
+
+        // async function getData() {
+        //     let url = "shortcuts://run-shortcut?name=Show Alert";
+        //     url = encodeURI(url)
+        //     try {
+        //         const response = await fetch(url);
+        //         if (!response.ok) {
+        //             throw new Error(`Response status: ${response.status}`);
+        //         }
+
+        //         const json = await response.json();
+        //         console.log(json);
+        //     } catch (error) {
+        //         console.error(error.message);
+        //     }
+        // }
+
+    </script>
+
+    
+    <script src="lib/shortcutsResults.js"></script>
+    <script src="lib/shortcutsTrigger.js"></script>
+    <script src="lib/obsScenes.js"></script>
+    <script src="lib/getSheetsData.js"></script>
+
+</body>
+</html>
+
