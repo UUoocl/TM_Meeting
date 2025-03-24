@@ -193,24 +193,26 @@ var Tl={id:"highlight",HIGHLIGHT_STEP_DELIMITER:"|",HIGHLIGHT_LINE_DELIMITER:","
 					.then((res) => res.text())
 					.then((rep) => {
 						data = JSON.parse(rep.substr(47).slice(0, -2));
-						
-						if(!Array.isArray(currentData)){
+
+						//if(!Array.isArray(currentData)){
+						if((typeof currentData) !== 'object'){
+							console.log("init currentData")
 							//update currentData variable for next comparison
 							currentData = data.table.rows;
 						}
 						
 						//if Sheet values changed
-						if(!(JSON.stringify(currentData[1].c) === JSON.stringify(data.table.rows[1].c))){
+						if(!(JSON.stringify(currentData) === JSON.stringify(data.table.rows))){
 							//convert new sheet data to an object
-							const newDataObj = arrayToObject(data.table.rows);
+							const newDataObj = rowsToObject(data.table.rows);
 							// sheet array data to Object
-							const currentDataObj = arrayToObject(currentData);
+							const currentDataObj = rowsToObject(currentData);
 							//find changed values
 							
 							const newValues = findChanges(currentDataObj, newDataObj);
 							console.log("newValues",newValues)
 							
-							//console.log(currentDataObj); // Output: { name: 'value', age: 'value', city: 'value' }
+							console.log(newDataObj); // Output: { name: 'value', age: 'value', city: 'value' }
 							
 							//Color Changed
 							if(newValues.hasOwnProperty('Color')){
@@ -311,6 +313,15 @@ var Tl={id:"highlight",HIGHLIGHT_STEP_DELIMITER:"|",HIGHLIGHT_LINE_DELIMITER:","
                 sceneItemEnabled: false
             });
         }
+
+		function rowsToObject(sheetRows){
+			const keysLength = Object.keys(sheetRows).length
+			const obj ={};
+			for(let i=0; i < keysLength; i++){
+				obj[sheetRows[i].c[0].v] = sheetRows[i].c[1].v; 	
+			}
+			return obj;
+		}
 		
 		function arrayToObject(arr) {
 			if(Array.isArray(arr)){
@@ -328,6 +339,8 @@ var Tl={id:"highlight",HIGHLIGHT_STEP_DELIMITER:"|",HIGHLIGHT_LINE_DELIMITER:","
 		
 		function findChanges(original, modified) {
 			const changes = {};
+			console.log(original)
+			console.log(modified)
 
 			for (const key in modified) {
 				if (modified.hasOwnProperty(key)) {
@@ -340,7 +353,7 @@ var Tl={id:"highlight",HIGHLIGHT_STEP_DELIMITER:"|",HIGHLIGHT_LINE_DELIMITER:","
 					}
 				}
 			}
-			console.log(changes)
+			console.log("changes",changes)
 			return changes;
 		}
 		</script>
