@@ -14,22 +14,43 @@
         <h4>An interface to connect OBS to PowerPoint and Keynote via macOS Shortcuts</h4>
     
         <section>
-            <div id="openOBS">
-                <h3>Open OBS</h3>
-                <form class="form-grid" id="obsData">
-                    <label for="obsName">Enter OBS app name:</label>
-                    <input type="text" id="obsName" name="obsName" value="OBS" />
-                    <label for="profileName">Enter OBS Profile name:</label>
-                    <input type="text" id="profileName" name="profileName" value="Untitled" />
-                    <label for="collectionName">Enter OBS Collection name:</label>
-                    <input type="text" id="collectionName" name="collectionName" value="Untitled" />
-                    <label for="IP">Enter IP address or "localhost":</label>
-                    <input type="text" id="IP" name="IP" value="localhost" />
-                    <label for="Port">Enter Port Number:</label>
-                    <input type="text" id="Port" name="Port" value="4455" />
-                    <label for="PW">Enter Password:</label>
-                    <input type="password" id="PW" name="PW" value="" />
-                    <p></p><input class="form-button" type="button" id="openOBSbutton" value="Open OBS" />
+            <div id="openOBS_1">
+                <h3>Open OBS 1</h3>
+                <form class="form-grid">
+                    <label for="obsName_1">Enter OBS app name:</label>
+                    <input type="text" id="obsName_1" name="obsName_1" value="OBS_1" />
+                    <label for="profileName_1">Enter OBS Profile name:</label>
+                    <input type="text" id="profileName_1" name="profileName_1" value="Untitled" />
+                    <label for="collectionName_1">Enter OBS Collection name:</label>
+                    <input type="text" id="collectionName_1" name="collectionName_1" value="Untitled" />
+                    <label for="IP_1">Enter IP address or "localhost":</label>
+                    <input type="text" id="IP_1" name="IP_1" value="localhost" />
+                    <label for="Port_1">Enter Port Number:</label>
+                    <input type="text" id="Port_1" name="Port_1" value="4455" />
+                    <label for="PW_1">Enter Password:</label>
+                    <input type="password" id="PW_1" name="PW_1" value="" />
+                    <p></p><input class="form-button" type="button" id="openOBSbutton_1" value="Open OBS 1" />
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div id="openOBS_2">
+                <h3>Open OBS 2</h3>
+                <form class="form-grid">
+                    <label for="obsName_2">Enter OBS app name:</label>
+                    <input type="text" id="obsName_2" name="obsName_2" value="OBS_2" />
+                    <label for="profileName_2">Enter OBS Profile name:</label>
+                    <input type="text" id="profileName_2" name="profileName_2" value="Untitled" />
+                    <label for="collectionName_2">Enter OBS Collection name:</label>
+                    <input type="text" id="collectionName_2" name="collectionName_2" value="Untitled" />
+                    <label for="IP_2">Enter IP address or "localhost":</label>
+                    <input type="text" id="IP_2" name="IP_2" value="localhost" />
+                    <label for="Port_2">Enter Port Number:</label>
+                    <input type="text" id="Port_2" name="Port_2" value="4455" />
+                    <label for="PW_2">Enter Password:</label>
+                    <input type="password" id="PW_2" name="PW_2" value="" />
+                    <p></p><input class="form-button" type="button" id="openOBSbutton_2" value="Open OBS 2" />
                 </form>
             </div>
         </section>
@@ -38,18 +59,19 @@
             <div id="srvr">
                 <h3>Connect to the OBS WebSocket Server</h3>
                 <form class="form-grid">
-                    <p></p><input class="form-button" type="button" id="WSconnectButton" value="Connect to OBS" />
+                    <p></p><input class="form-button" type="button" id="WSconnectButton_1" value="Connect to OBS 1" />
+                    <p></p><input class="form-button" type="button" id="WSconnectButton_2" value="Connect to OBS 2" />
                 </form>
             </div>
         </section>
-
+        
         <section>
             <div id="setBrowser">
                 <h3>Connect the Google App Script Web App to the OBS WebSocket Server</h3>
                 <form class="form-grid">
-                    <label for="webAppURL">Enter a Web App URL:</label>
-                    <input type="text" id="webAppURL" name="webAppURL" value="" />
-                    <p></p><input class="form-button" type="button" id="webAppConnectButton" value="Web App to OBS" />
+                    <label for="gasURL">Enter a Web App URL:</label>
+                    <input type="text" id="gasURL" name="gasURL" value="" />
+                    <p></p><input class="form-button" type="button" id="gasAppConnectButton" value="Web App to OBS" />
                 </form>
             </div>
         </section>
@@ -158,50 +180,89 @@
             teleprompterIsPlaying = false,
             controlSources = new Object(),
             wssDetails;
+        
+        const obs_1 = new OBSWebSocket();
+        const obs_2 = new OBSWebSocket();
 
         document.addEventListener("DOMContentLoaded", (event) => {
-            if(localStorage.getItem("IP")){
-            document.getElementById("IP").value = localStorage.getItem("IP");
-            document.getElementById("Port").value = localStorage.getItem("Port");
-            document.getElementById("PW").value = localStorage.getItem("PW");  
-            document.getElementById("obsName").value = localStorage.getItem("obsName");  
-            document.getElementById("profileName").value = localStorage.getItem("profileName");  
-            document.getElementById("collectionName").value = localStorage.getItem("collectionName");  
-            document.getElementById("webAppURL").value = localStorage.getItem("webAppURL");  
+            //load previous form values 
+            if(localStorage.getItem("IP_1")){
+            document.getElementById("IP_1").value = localStorage.getItem("IP_1");
+            document.getElementById("Port_1").value = localStorage.getItem("Port_1");
+            document.getElementById("PW_1").value = localStorage.getItem("PW_1");  
+            document.getElementById("obsName_1").value = localStorage.getItem("obsName_1");  
+            document.getElementById("profileName_1").value = localStorage.getItem("profileName_1");  
+            document.getElementById("collectionName_1").value = localStorage.getItem("collectionName_1");  
             }    
-            document
-                .getElementById("WSconnectButton")
-                .addEventListener("click", wsConnect);
+            if(localStorage.getItem("IP_2")){
+            document.getElementById("IP_2").value = localStorage.getItem("IP_2");
+            document.getElementById("Port_2").value = localStorage.getItem("Port_2");
+            document.getElementById("PW_2").value = localStorage.getItem("PW_2");  
+            document.getElementById("obsName_2").value = localStorage.getItem("obsName_2");  
+            document.getElementById("profileName_2").value = localStorage.getItem("profileName_2");  
+            document.getElementById("collectionName_2").value = localStorage.getItem("collectionName_2");  
+            }    
 
+            //button functions
+            document
+                .getElementById("WSconnectButton_1")
+                .addEventListener("click", obs_1Button);
+            document
+                .getElementById("WSconnectButton_2")
+                .addEventListener("click", obs_2Button);
             document
                 .getElementById("sheetConnectButton")
                 .addEventListener("click", sheetsConnect);
             });    
-            const obs = new OBSWebSocket();
 
-            async function wsConnect() {
-            let wssDetails = {
-                "IP": document.getElementById("IP").value,
-                "PORT": document.getElementById("Port").value,
-                "PW":document.getElementById("PW").value
+            function obs_1Button(){
+                const wssDetails = {
+                    "IP": document.getElementById("IP_1").value,
+                    "PORT": document.getElementById("Port_1").value,
+                    "PW": document.getElementById("PW_1").value,
+                    "Button": "WSconnectButton_1",
+                    "OBS": obs_1
                 };
-  
-            // Saves data to retrieve later
-            localStorage.setItem("IP", wssDetails.IP);
-            localStorage.setItem("Port", wssDetails.PORT);
-            localStorage.setItem("PW", wssDetails.PW);
-            localStorage.setItem("obsName", document.getElementById("obsName").value);
-            localStorage.setItem("profileName", document.getElementById("profileName").value);
-            localStorage.setItem("collectionName", document.getElementById("collectionName").value);
-            await connectOBS(wssDetails)
-            .then(async() => {
+                localStorage.setItem("IP_1", wssDetails.IP);
+                localStorage.setItem("Port_1", wssDetails.PORT);
+                localStorage.setItem("PW_1", wssDetails.PW);
+                localStorage.setItem("obsName_1", document.getElementById("obsName").value);
+                localStorage.setItem("profileName_1", document.getElementById("profileName").value);
+                localStorage.setItem("collectionName_1", document.getElementById("collectionName").value);
+                
+                wsConnect(wssDetails);
+            }
+            
+            function obs_2Button(){
+                const wssDetails = {
+                    "IP": document.getElementById("IP_2").value,
+                    "PORT": document.getElementById("Port_2").value,
+                    "PW": document.getElementById("PW_2").value,
+                    "Button": "WSconnectButton_2",
+                    "OBS": obs_2
+                };
+                
+                localStorage.setItem("IP_2", wssDetails.IP);
+                localStorage.setItem("Port_2", wssDetails.PORT);
+                localStorage.setItem("PW_2", wssDetails.PW);
+                localStorage.setItem("obsName_2", document.getElementById("obsName_2").value);
+                localStorage.setItem("profileName_2", document.getElementById("profileName_2").value);
+                localStorage.setItem("collectionName_2", document.getElementById("collectionName_2").value);
+                
+                wsConnect(wssDetails);
+            }
+
+    async function wsConnect(wssDetails) {
+        // Saves data to retrieve later
+        await connectOBS(wssDetails)
+            .then(async () => {
                 getScenes();
                 getSceneList();
                 getTeleprompterSize();
                 getTeleprompterSpeed();
                 getSlideControlSceneItems();
-                document.getElementById("WSconnectButton").style.background = "#00ff00";
-                
+                document.getElementById(wssDetails.Button).style.background = "#00ff00";
+
                 // await fetchWotD();
                 // await getWotD();
                 // let sceneItems = await obs.call("GetSceneItemList",{"sceneName" : "Input Voice to Text"})
@@ -211,9 +272,9 @@
                 // loadScript("lib/BouncingWaveText.js");
                 // loadScript("lib/BouncingWaveClass.js");
                 // loadScript("lib/easing.js"); 
-        
-                //send websocket server connection details to OBS browser sources
-                await obs.call("CallVendorRequest", {
+
+                //send websocket server connection details to OBS browser source
+                await window[wssDetails.OBS].call("CallVendorRequest", {
                     vendorName: "obs-browser",
                     requestType: "emit_event",
                     requestData: {
@@ -222,7 +283,7 @@
                     },
                 });
             })
-        }    
+    }    
 
         // window.addEventListener("load", (event) => {
         //     console.log("page is fully loaded");
@@ -266,7 +327,7 @@
     <script src="lib/shortcutsTrigger.js"></script>
     <script src="lib/obsScenes.js"></script>
     <script src="lib/getSheetsData.js"></script>
-    <script src="lib/connectWebApp.js"></script>
+    <script src="lib/connectGASwebApp.js"></script>
 
 </body>
 </html>

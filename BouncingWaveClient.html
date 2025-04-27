@@ -47,7 +47,7 @@
         //Get Word of the day
         async function fetchWotD() {
             let SHEET_ID = "1Y6rf5088z-P32AFcx_powupp6HnIa9UWz3XsXZHkbv8";
-            let SHEET_TITLE = "Agenda";
+            let SHEET_TITLE = "Import_Agenda";
             let SHEET_RANGE = "F1:J2";
             let data;
             // let FULL_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${SHEET_TITLE}&range=${SHEET_RANGE}`;
@@ -56,7 +56,7 @@
 
             console.log("fetch word")
 
-             await fetch(`https://docs.google.com/spreadsheets/d/${sheetsDetails.SHEET_ID}/gviz/tq?sheet=${sheetsDetails.SHEET_TITLE}&range=K2:K2`)
+             await fetch(`https://docs.google.com/spreadsheets/d/${sheetsDetails.SHEET_ID}/gviz/tq?sheet=${sheetsDetails.SHEET_TITLE}&range=B6:B6`)
            //await fetch(FULL_URL)
                 .then((res) => res.text())
                 .then((rep) => {

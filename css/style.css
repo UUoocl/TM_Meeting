@@ -20,8 +20,14 @@ body {
 
 .form-grid {
   display:grid;
-  grid-template-columns: 300px 200px;
-  
+  grid-template-columns: 300px 200px; 
+}
+
+.form-grid-browser {
+  display:grid;
+  grid-template-columns: 100%; 
+  margin: 0px 0px 10px 10px;
+  padding: 0px 10px 10px 10px;
 }
 
 .nav-grid{
