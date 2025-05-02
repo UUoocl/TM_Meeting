@@ -20,14 +20,49 @@ body {
 
 .form-grid {
   display:grid;
+  width: 100%;
   grid-template-columns: 300px 200px; 
 }
 
 .form-grid-browser {
   display:grid;
   grid-template-columns: 100%; 
+  width: 100%;
   margin: 0px 0px 10px 10px;
   padding: 0px 10px 10px 10px;
+}
+
+.form-grid-browser-card {
+  position: relative;
+  width: 100%;
+  margin: 4px auto;
+  padding: 10px;
+  background: #fff;
+  -webkit-box-shadow: 0 4px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 3px rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+
+.form-grid-browser-card legend {
+  position: relative;
+  width: 100%;
+  margin: 4px auto;
+  padding: 1px;
+  background: #fff;
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+.form-grid-browser-card-div{
+  display:grid;
+  width: 100%;
+  grid-template-columns: 25% 70%;
+  padding: 0 1em 1en 0; 
+}
+
+.form-grid-browser-card-div label{
+  text-align: right;
+  padding: 10px;
 }
 
 .nav-grid{

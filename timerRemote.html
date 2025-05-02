@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        div.sticky {
+            background-color: white;
+            position: -webkit-sticky;
+            /* Safari */
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            text-align: center;
+        }
+
+        /* Variabes */
+        $orange: #ffa600;
+        $grey: #f3f3f3;
+        $white: #fff;
+        $base-color: $orange ;
+
+        /* Mixin's */
+        @mixin transition {
+            -webkit-transition: all 0.5s ease-in-out;
+            -moz-transition: all 0.5s ease-in-out;
+            transition: all 0.5s ease-in-out;
+        }
+
+        @mixin corners ($radius) {
+            -moz-border-radius: $radius;
+            -webkit-border-radius: $radius;
+            border-radius: $radius;
+            -khtml-border-radius: $radius;
+        }
+
+        body {
+            background: $base-color;
+            font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+            height: 100%;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 100;
+            font-size: 1.6em;
+            text-transform: uppercase;
+        }
+
+        #minutes,
+        #seconds {
+            font-size: 1.5em;
+        }
+
+        .timerButton {
+            @include corners (5px);
+            background: $base-color;
+            color: $white;
+            border: solid 1px $white;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 1.0em;
+            padding: 5px 5px;
+            width: 80px;
+            margin: 5px;
+            outline: none;
+
+            &:hover {
+                @include transition;
+                background: $white;
+                border: solid 1px $white;
+                color: $base-color;
+            }
+        }
+
+        .fieldButtonSet {
+            text-align: left;
+            width: auto;
+            position: relative;
+            left: 5px;
+            top: 0;
+            font-size: 0.8em;
+            margin: 5px;
+        }
+
+
+        .colorButton {
+            align: center;
+            width: 50px;
+            padding: 0;
+            margin: 5px;
+        }
+
+        .cameraButton {
+            align: left;
+            width: auto;
+            padding: 0;
+            margin: 5px;
+        }
+    </style>
+    <link href="https://unpkg.com/tabulator-tables@5.6.0/dist/css/tabulator.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="sticky">
+        <!-- <div class="fieldButtonSet">
+        <fieldset><legend>Choose camera</legend>
+          <button class="cameraButton" id="speakerButton">Speaker</button>
+          <button class="cameraButton" id="audienceButton">Audience</button>
+        </fieldset>
+      </div> -->
+
+        <div class="fieldButtonSet">
+            <fieldset>
+                <legend>Manually Set background color</legend>
+                <button class="colorButton" id="greenButton" style="background:lime">G</button>
+                <button class="colorButton" id="yellowButton" style="background:yellow">Y</button>
+                <button class="colorButton" id="redButton" style="background:red">R</button>
+                <button class="colorButton" id="whiteButton" style="background:white">W</button>`
+            </fieldset>
+        </div>
+
+        <h1 id="SectionTitle">Timer App</h1>
+        <span id="minutes">00</span>:<span id="seconds">00</span></p>
+        <button class="timerButton" id="button-start">Start</button>
+        <!-- <button id="button-stop">Stop</button> -->
+        <button class="timerButton" id="button-reset">Next</button>
+    </div>
+    <div id="agenda-table" style="z-index: 0"></div>
+
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.6.0/dist/js/tabulator.min.js"></script>
+    
+    <script id="load">
+        // This initial code is used to listen for messages via VDO.Ninja's iframe API for incoming p2p data.
+
+        // Embedding VDO.Ninja iframe for receiving commands
+        window.onload = function () {
+            const paramsString = window.location.search;
+            const searchParams = new URLSearchParams(paramsString);
+
+            let VDO_ID = searchParams.get("vdoID");
+            let VDO_PW = searchParams.get("vdoPW");
+            let FULL_URL = `https://vdo.ninja/?statsinterval=20000&datamode&label=remoteController&view=${VDO_ID}&pw=${VDO_PW}`;
+
+            var iframe = document.createElement("iframe");
+            // iframe.src = "https://vdo.ninja/?datamode&password=secret&view=" + streamID +"&label=OBS";
+            iframe.src = FULL_URL;
+            //iframe.style.display = "none"; // Hide the iframe
+            iframe.id = "obsCommander";
+            document.body.appendChild(iframe);
+        };
+    </script>
+
+    <script id="receive">
+        // Setup to receive commands from the sender page
+        window.addEventListener("message", function (e) {
+            console.log(e)
+            if ("dataReceived" in e.data) {
+
+                var command = e.data.dataReceived;
+
+                // Handle the received command (e.g., start or stop broadcast)
+                // This part will involve sending commands to OBS via WebSocket
+                console.log("Received command:", command);
+
+                // Example: if(command === "startBroadcast") { /* Start OBS broadcast */ }
+                // You will need to implement WebSocket communication here.
+
+                //      sendCommandToOBS(command, {});
+                document.getElementById("log").innerHTML += "<br />Received command:" + command;
+
+            }
+        });
+    </script>
+
+    <script id="send">
+        function sendCommandToOBS(command) {
+            var iframe = document.getElementById("obsCommander");
+            if (iframe) {
+                iframe.contentWindow.postMessage({ "sendData": command }, '*');
+            }
+        }
+
+
+        // Example buttons for starting and stopping a broadcast
+        let messageObj = { "from receiver1": "label?", "item2": "more cool" }
+        function startBroadcast() { sendCommandToOBS(`${JSON.stringify(messageObj)}`); }
+        function stopBroadcast() { sendCommandToOBS('StopStreaming'); }
+    </script>
+   
+   
+   
+    <script>
+        var startDateTime, endDateTime
+        var table, varID, Interval, varSection, varNames, varName, varMinutes;
+        var seconds, minutes;
+        var timeGreen, timeYellow, timeRed, times, timeYellowMinutes, timeYellowSeconds
+        var currentTableRow = 1;
+        document.addEventListener("DOMContentLoaded", pageLoad);
+
+        async function pageLoad() {
+            //setupTimer()
+            await getVariables();
+            loadData();
+        }
+
+        function setupTimer() {
+            var buttonStart = document.getElementById('button-start');
+            //var buttonStop = document.getElementById('button-stop');
+            var buttonReset = document.getElementById('button-reset');
+
+            //get selected row duration
+            //set timer to current duration
+            minutes = document.getElementById("minutes").innerHTML;
+            seconds = document.getElementById("seconds").innerHTML;
+            var appendSeconds = document.getElementById("seconds")
+            var appendMinutes = document.getElementById("minutes")
+
+            buttonStart.onclick = function () {
+                if (document.getElementById('button-start').innerHTML === 'Start') {
+                    document.getElementById('button-start').innerHTML = 'Stop';
+                    buttonReset.style.visibility = "hidden";
+                    clearInterval(Interval);
+                    startDateTime = GetDate();
+                    times = varMinutes.split("-");
+                    timeGreen = Number(times[0])
+                    timeRed = Number(times[1])
+                    numTimeRed = timeRed.toFixed(0)
+                    console.log(`red: ${numTimeRed}`)
+                    timeYellow = ((timeRed - timeGreen) / 2) + timeGreen
+                    timeYellowSeconds = (timeYellow % 1) * 60
+                    timeYellowMinutes = Math.floor(Number(timeYellow / 1))
+                    console.log(`Green: ${timeGreen}, Yellow: ${timeYellowMinutes}:${timeYellowSeconds},Red: ${timeRed}`)
+                    Interval = setInterval(startTimer, 1000);
+                    return;
+                }
+
+                if (document.getElementById('button-start').innerHTML === 'Stop') {
+                    document.getElementById('button-start').innerHTML = 'Start';
+                    buttonReset.style.visibility = "visible";
+                    endDateTime = GetDate()
+                    const stopTime = document.getElementById("minutes").innerHTML + ":" + document.getElementById("seconds").innerHTML
+                    table.updateData([{ id: varID, Duration: stopTime }]);
+                    console.log(varID)
+                    google.script.run.AddRecordToResultsSheet({
+                        Section: varSection,
+                        Minutes: varMinutes,
+                        Name: varName,
+                        Start: startDateTime,
+                        End: endDateTime,
+                        Duration: stopTime,
+                        RowID: varID
+                    });
+                    clearInterval(Interval);
+                }
+
+
+            }
+
+            //   buttonStop.onclick = function() {
+            //     endDateTime = GetDate()
+            //     table.updateData([{ id: varID, Duration: document.getElementById("minutes").innerHTML +":" + document.getElementById("seconds").innerHTML }]);
+            //     google.script.run.AddRecordToResultsSheet({
+            //               Section: varSection,
+            //               Minutes: varMinutes,
+            //               Name: varName,
+            //               Start: startDateTime,
+            //               End: endDateTime
+            //             });
+            //     clearInterval(Interval);
+            // }
+
+            buttonReset.onclick = function () {
+                clearInterval(Interval);
+                // seconds = document.getElementById("seconds").innerHTML;
+                // minutes = document.getElementById("minutes").innerHTML;
+                // appendSeconds.innerHTML = seconds;
+                // appendMinutes.innerHTML = minutes;
+                //disable start button
+
+                //select next table row
+                currentTableRow += 1;
+                table.deselectRow();
+                table.selectRow(table.getRowFromPosition(currentTableRow)); //return row in the visible table datacurrentTableRow);
+                //activate timer?
+            }
+
+            function startTimer() {
+                console.log("timer started seconds", seconds)
+                seconds++;
+                if (seconds <= 9) {
+                    appendSeconds.innerHTML = "0" + seconds;
+                }
+
+                if (seconds > 9) {
+                    appendSeconds.innerHTML = seconds;
+                }
+
+                if (seconds > 59) {
+                    console.log("minutes");
+                    minutes++;
+                    appendMinutes.innerHTML = "0" + minutes;
+                    seconds = 0;
+                    appendSeconds.innerHTML = "0" + 0;
+                }
+
+                if (minutes > 9) {
+                    appendMinutes.innerHTML = minutes;
+                }
+                console.log(minutes, timeGreen, minutes == timeGreen, minutes == timeYellowMinutes)
+                switch (true) {
+                    case (minutes >= timeRed && seconds == 0):
+                        console.log("matched red")
+                        google.script.run.setColor("Red", varNames.indexOf('Color'))
+                        break;
+                    case (minutes == timeYellowMinutes && seconds == timeYellowSeconds):
+                        console.log("matched yellow")
+                        google.script.run.setColor("Yellow", varNames.indexOf('Color'))
+                        break;
+                    case (minutes == timeGreen && seconds == 0):
+                        console.log("matched green")
+                        google.script.run.setColor("Green", varNames.indexOf('Color'))
+                        break;
+                }
+            }
+
+
+        }
+
+        function loadData() {
+
+                    //if data successfully returned
+                    console.log("jsData", jsData);
+                    //create Tabulator on DOM element with id "example-table"
+                    table = new Tabulator("#agenda-table", {
+                        height: 2000, // set height of table (in CSS or here)
+                        rowHeight: 50,
+                        data: jsData, //assign data to table
+                        layout: "fitColumns", //fit columns to width of table (optional)
+                        columns: [
+                            //Define Table Columns
+                            {
+                                title: "Section",
+                                field: "Section",
+                                width: 150,
+                                headerSort: false,
+                            },
+                            {
+                                title: "Minutes",
+                                field: "Minutes",
+                                width: 70,
+                                hozAlign: "left",
+                                headerSort: false,
+                            },
+                            {
+                                title: "Name",
+                                field: "Name",
+                                headerSort: false,
+                                width: 150,
+                            },
+                            {
+                                title: "Duration",
+                                field: "Duration",
+                                width: 150,
+                                sorter: "date",
+                                hozAlign: "center",
+                                headerSort: false,
+                                editor: "input",
+                            },
+                        ],
+                    });
+
+                    //table built, select row 1
+                    table.on("tableBuilt", function () {
+                        table.deselectRow();
+                        table.selectRow(table.getRowFromPosition(1));
+                    });
+
+                    //Clicked table row
+                    table.on("rowClick", function (e, row) {
+                        console.log("e", e)
+                        console.log("row", row)
+                        table.deselectRow();
+                        table.selectRow(table.getRowFromPosition(row.getPosition()));
+                        //rowChanged(row)
+                    });
+
+                    //Button moved selected table row
+                    table.on("rowSelected", function (row) { rowChanged(row) });
+
+                    //Duration manually changed
+                    table.on("cellEdited", function (cell) {
+                        console.log("cell changed Event", cell.getData())
+                        //Add new Results row
+                    })
+
+
+            setupTimer();
+            document.getElementById('greenButton').onclick = () => { google.script.run.setColor("Green", varNames.indexOf('Color')) };
+            document.getElementById('yellowButton').onclick = () => { google.script.run.setColor("Yellow", varNames.indexOf('Color')) };
+            document.getElementById('redButton').onclick = () => { google.script.run.setColor("Red", varNames.indexOf("Color")) };
+            document.getElementById('whiteButton').onclick = () => { google.script.run.setColor("White", varNames.indexOf('Color')) };
+
+        }
+
+        function rowChanged(row) {
+
+            console.log("rowSelected", row.getData().id);
+            varSection = row.getData().Section;
+            varMinutes = row.getData().Minutes;
+            varName = row.getData().Name;
+            console.log("row dets", varSection, varMinutes, varName);
+
+            const varDuration = row.getData().Duration
+
+            varID = row.getData().id;
+
+            google.script.run.setCurrentSection({
+                Section: varSection
+                //Minutes: varMinutes,
+                //Name: varName,
+            }, varNames.indexOf('TimerSection'));
+
+            google.script.run.setColor("White", varNames.indexOf('Color'))
+            google.script.run.setColor(varMinutes, varNames.indexOf('TimerMinutes'))
+            google.script.run.setColor(varName, varNames.indexOf('TimerName'))
+
+            console.log(`row : ${row}`);
+            console.log(`row data: ${row.getData()}`);
+            console.log(`row duration length ${varDuration}`)
+            console.log("Row " + row.getData().Section + " Clicked!!!!");
+            //console.log("Row " + row.getRow())
+
+            if (varDuration === undefined) { table.updateData([{ id: varID, Duration: "00:00" }]) };
+            const durationParts = varDuration.split(":")
+            document.getElementById("minutes").innerHTML = durationParts[0]
+            document.getElementById("seconds").innerHTML = durationParts[1]
+            minutes = Number(durationParts[0])
+            seconds = Number(durationParts[1])
+            console.log('timer variables', minutes, seconds)
+            const clockElemTitle = document.getElementById("SectionTitle");
+
+            console.log(`section variable ${varSection}`)
+            clockElemTitle.innerHTML = varSection
+
+            var rowPos = row.getPosition();
+            console.log(`row position: ${rowPos}`)
+            currentTableRow = rowPos;
+            console.log(`var currentTableRow position: ${currentTableRow}`)
+        }
+
+        function selectTableRow(row) {
+            console.log("selectRow")
+            table.deselectRow();
+            table.selectRow(row);
+        }
+
+        function GetDate() {
+            let dateTime = new Date().toJSON();
+            date = dateTime.slice(0, 10)
+            const time = dateTime.slice(-13, -5)
+            dateTime = `${date} ${time}`
+            return dateTime
+        }
+
+    </script>
+    <button onclick="startBroadcast()">Start Broadcast</button>
+    <button onclick="stopBroadcast()">Stop Broadcast</button>
+    <div id="log"></div>
+</body>
+
+</html>

@@ -18,10 +18,11 @@
                 <h3>Open OBS</h3>
                 <form class="form-grid" id="obsData">
                     <label for="configName">Enter a configuration name:</label>
-                    <input type="text" id="configName" name="configName" list="configNameValues" placeholder="UUinsome"/>
-                    <datalist id="configNameValues" >
- 
-                      </datalist>
+                    <input type="text" id="configName" name="configName" list="configNameValues"
+                        placeholder="UUinsome" />
+                    <datalist id="configNameValues">
+
+                    </datalist>
                     <label for="obsName">Enter OBS app name:</label>
                     <input type="text" id="obsName" name="obsName" value="OBS" />
                     <label for="profileName">Enter OBS Profile name:</label>
@@ -34,6 +35,8 @@
                     <input type="text" id="Port" name="Port" value="4455" />
                     <label for="PW">Enter Password:</label>
                     <input type="password" id="PW" name="PW" value="" />
+                    <label for="virtualCameraOn">Start Virtual Camera:</label>
+                    <input type="checkbox" id="virtualCameraOn" name="virtualCameraOn" checked />
                     <label for="Debug">Debug mode:</label>
                     <input type="checkbox" id="Debug" name="Debug" />
                     <p></p><input class="form-button" type="button" id="openOBSbutton" value="Open OBS" />
@@ -52,9 +55,10 @@
 
         <section>
             <div id="setBrowser">
-                <h3 ></h3>OBS Browser Sources</h3>
+                <h3></h3>OBS Browser Sources</h3>
                 <div id="browserSources"></div>
 
+            </div>
             </div>
         </section>
     </article>
@@ -64,7 +68,6 @@
     <script>
         let wssDetails, configName;
         let configMap = new Map();
-        const obs = new OBSWebSocket();
 
         document.addEventListener("DOMContentLoaded", (event) => {
             // on load get stored launch parameters
@@ -84,35 +87,32 @@
 
             document
                 .getElementById("configName")
-                .addEventListener('input', configSelected);            
+                .addEventListener('input', configSelected);
         })
-            //button functions            
-            function openOBS(){
-                let uuinsomeHREF = window.location.href;
-                let inputArray = JSON.stringify(`{"path":"${uuinsomeHREF}",
-                "obsName":"${document.getElementById("obsName").value}",
-                "profileName":"${document.getElementById("profileName").value}",
-                "collectionName":"${document.getElementById("collectionName").value}",
-                "ip":"${document.getElementById("IP").value}",
-                "port":"${document.getElementById("Port").value}",
-                "password":"${document.getElementById("PW").value}"}`)
-                console.log()
-                if(document.getElementById("Debug").checked){
-                    window.open(`shortcuts://run-shortcut?name=INPUT-Open_OBS_Profile-Collection-WebSocket&input=text&text=${inputArray}`,"_self");
-                }else{
-                    window.open(`shortcuts://run-shortcut?name=INPUT-Open_OBS_Profile-Collection-WebSocket-DEBUG&input=text&text=${inputArray}`, "_self");
-                }
+        //button functions            
+        function openOBS() {
+            let uuinsomeHREF = window.location.href;
+            // "path":"${uuinsomeHREF}",
+            let inputArray = JSON.stringify(`{"obsName":"${document.getElementById("obsName").value}","profileName":"${document.getElementById("profileName").value}","collectionName":"${document.getElementById("collectionName").value}","ip":"${document.getElementById("IP").value}","port":"${document.getElementById("Port").value}","password":"${document.getElementById("PW").value}"}`)
+            console.log(inputArray)
+            if (document.getElementById("Debug").checked) {
+                window.open(`shortcuts://run-shortcut?name=INPUT-Open_OBS_Profile-Collection-WebSocket-DEBUG&input=text&text=${inputArray}`, "_self");
+            } else {
+                window.open(`shortcuts://run-shortcut?name=INPUT-Open_OBS_Profile-Collection-WebSocket&input=text&text=${inputArray}`, "_self");
             }
+        }
 
-            async function wsConnect() {
-                let wssDetails = {
-                    "IP": document.getElementById("IP").value,
-                    "PORT": document.getElementById("Port").value,
-                    "PW": document.getElementById("PW").value
-                };
-                
-                // Saves config data to retrieve later
-                configMap.set(`${document.getElementById("configName").value}`,
+        async function wsConnect() {
+            let wssDetails = {
+                "IP": document.getElementById("IP").value,
+                "PORT": document.getElementById("Port").value,
+                "PW": document.getElementById("PW").value
+            };
+
+            document.getElementById("browserSources").innerHTML = "";
+
+            // Saves config data to retrieve later
+            configMap.set(`${document.getElementById("configName").value}`,
                 {
                     obsName: document.getElementById("obsName").value,
                     profileName: document.getElementById("profileName").value,
@@ -123,65 +123,65 @@
                     debugMode: document.getElementById("Debug").checked
                 })
 
-                localStorage.setItem("configName", document.getElementById("configName").value);
-                const str = JSON.stringify(configMap,replacer)
-                localStorage.setItem("configMap", str);
-                
-                await connectOBS(wssDetails)
-                .then(async () => {
-                    //get Browser details
-                    getOBScollection();
-                    document.getElementById("WSconnectButton").style.background = "#00ff00";
-                    
-                    //send websocket server connection details to OBS browser sources
-                    await obs.call("CallVendorRequest", {
-                        vendorName: "obs-browser",
-                        requestType: "emit_event",
-                        requestData: {
-                            event_name: "ws-details",
-                            event_data: { wssDetails },
-                        },
-                    });
+            localStorage.setItem("configName", document.getElementById("configName").value);
+            const str = JSON.stringify(configMap, replacer)
+            localStorage.setItem("configMap", str);
+
+            await connectOBS(wssDetails)
+                .then(async (result) => {
+                    if (result === 'connected') {
+                        document.getElementById("WSconnectButton").style.background = "#00ff00";
+
+                        //get Browser source details
+                        getOBScollection();
+
+                        //send websocket server connection details to OBS browser sources
+                        await obs.call("CallVendorRequest", {
+                            vendorName: "obs-browser",
+                            requestType: "emit_event",
+                            requestData: {
+                                event_name: "ws-details",
+                                event_data: { wssDetails },
+                            },
+                        });
+                    }
+                    else {
+                        document.getElementById("WSconnectButton").style.background = "#ff0000";
+                    }
                 })
         }
 
-    function getLocalStorageConfigOptions() {
-        //get configurations in local storage
-        configMap = JSON.parse(localStorage.getItem("configMap"), reviver)
-
-        for (const key of configMap.keys()) {
-            console.log(key)
-            console.log(configMap.get(key))
-
-            const parentElement = document.getElementById("configNameValues");
-            const newElement = document.createElement("option");
-            newElement.textContent = key;
-            parentElement.appendChild(newElement);
-        }
-    }
-
-    function getLocalStorageConfigValue(selectedConfig){
-                //const config = localStorage.getItem(selectedConfig)
+        function getLocalStorageConfigOptions() {
             //get configurations in local storage
-            console.log(selectedConfig)
-                configItem = configMap.get(selectedConfig);
-                console.log(configItem)
+            configMap = JSON.parse(localStorage.getItem("configMap"), reviver)
 
-                document.getElementById("configName").value = selectedConfig;
-                document.getElementById("obsName").value = configItem?.obsName;
-                document.getElementById("IP").value = configItem?.IP;
-                document.getElementById("Port").value = configItem?.Port;
-                document.getElementById("PW").value = configItem?.obsPW;
-                document.getElementById("profileName").value = configItem?.profileName;
-                document.getElementById("collectionName").value = configItem?.collectionName;
-                document.getElementById("Debug").value = configItem?.debugMode;
+            for (const key of configMap.keys()) {
+                const parentElement = document.getElementById("configNameValues");
+                const newElement = document.createElement("option");
+                newElement.textContent = key;
+                parentElement.appendChild(newElement);
             }
+        }
 
-    function configSelected(){
-        console.log(this)
-        const selectedValue = this.value;
+        function getLocalStorageConfigValue(selectedConfig) {
+            //const config = localStorage.getItem(selectedConfig)
+            //get configurations in local storage
+            configItem = configMap.get(selectedConfig);
+
+            document.getElementById("configName").value = selectedConfig;
+            document.getElementById("obsName").value = configItem?.obsName;
+            document.getElementById("IP").value = configItem?.IP;
+            document.getElementById("Port").value = configItem?.Port;
+            document.getElementById("PW").value = configItem?.obsPW;
+            document.getElementById("profileName").value = configItem?.profileName;
+            document.getElementById("collectionName").value = configItem?.collectionName;
+            document.getElementById("Debug").value = configItem?.debugMode;
+        }
+
+        function configSelected() {
+
+            const selectedValue = this.value;
             // Perform actions based on the selected value
-            console.log('Selected value:', selectedValue);
 
             // Check if the selected value exists in the datalist options
             const datalist = document.getElementById(this.getAttribute('list'));
@@ -201,92 +201,161 @@
                 //Actions when the input doesn't match any datalist option
             }
         }
-  
+
         let collection = new Object
         let browserSources = [];
-    async function getOBScollection() {
-    //create collection object
-    collection.scenes = [];
-    //get scenes from OBS
-    collection = await obs.call("GetSceneList");        
-    
-    //get scene sources
-    for(let scene = 0; scene < collection.scenes.length; scene++){
-        const sources = await obs.call("GetSceneItemList", { sceneName: collection.scenes[scene].sceneName })
-        
-        console.log(sources)
-        console.log(sources.sceneItems.length)
-        //get the source settings
-        for(let source = 0; source < sources.sceneItems.length; source++){
-            console.log("source",sources.sceneItems[source])
-            console.log("source IS GROUP",sources.sceneItems[source].isGroup)
-            console.log("source IS GROUP",sources.sceneItems[source].isGroup === true)
-            //if source is group, get group items
-            if(sources.sceneItems[source].isGroup === true){   
-                const groupSources = await obs.call("GetGroupSceneItemList", {sceneName: sources.sceneItems[source].sourceName})
-                console.log("GROUP ITEMS", groupSources)
-                for(let groupSource = 0; groupSource < groupSources.sceneItems.length; groupSource++){
-                    const groupSourceSettings = await obs.call("GetInputSettings", {inputName: groupSources.sceneItems[groupSource].sourceName})
-                    groupSources.sceneItems[groupSource] = Object.assign(groupSources.sceneItems[groupSource], groupSourceSettings)
+        async function getOBScollection() {
+            //create collection object
+            collection.scenes = [];
+            //get scenes from OBS
+            collection = await obs.call("GetSceneList");
+
+            //get scene and sources
+            for (let scene = 0; scene < collection.scenes.length; scene++) {
+                const sources = await obs.call("GetSceneItemList", { sceneName: collection.scenes[scene].sceneName })
+
+                //get the source settings
+                for (let source = 0; source < sources.sceneItems.length; source++) {
+                    //if source is group, get group items
+                    if (sources.sceneItems[source].isGroup === true) {
+                        const groupSources = await obs.call("GetGroupSceneItemList", { sceneName: sources.sceneItems[source].sourceName })
+                        for (let groupSource = 0; groupSource < groupSources.sceneItems.length; groupSource++) {
+                            const groupSourceSettings = await obs.call("GetInputSettings", { inputName: groupSources.sceneItems[groupSource].sourceName })
+                            groupSources.sceneItems[groupSource] = Object.assign(groupSources.sceneItems[groupSource], groupSourceSettings)
+                        }
+                        sources.sceneItems[source] = Object.assign(sources.sceneItems[source], groupSources)
+                    }
+                    if (sources.sceneItems[source].sourceType === 'OBS_SOURCE_TYPE_INPUT') {
+                        const sourceSettings = await obs.call("GetInputSettings", { inputName: sources.sceneItems[source].sourceName })
+                        sources.sceneItems[source] = Object.assign(sources.sceneItems[source], sourceSettings)
+                    }
+
                 }
-                sources.sceneItems[source] = Object.assign(sources.sceneItems[source], groupSources)
+                //add the sources and settings to the scene object
+                collection.scenes[scene] = Object.assign(collection.scenes[scene], sources)
+
             }
-            if(sources.sceneItems[source].sourceType === 'OBS_SOURCE_TYPE_INPUT'){
-               const sourceSettings = await obs.call("GetInputSettings", {inputName: sources.sceneItems[source].sourceName})
-               sources.sceneItems[source] = Object.assign(sources.sceneItems[source], sourceSettings)
-            }
-        
+            getBrowserSource();
         }
-        //add the sources and settings to the scene object
-        collection.scenes[scene] = Object.assign(collection.scenes[scene],sources)    
-        
-    }
 
-        console.log(`collection ${collection.scenes.length}`, collection)
-getBrowserSource();
-}   
-
-    async function getBrowserSource(){
-        //get the browser sources
-        const browserSources = await obs.call("GetInputList",{inputKind:'browser_source'})
-        //get the input settings
-        for( let i = 0; i < browserSources.inputs.length; i++){
-            const sourceSettings = await obs.call("GetInputSettings", {inputName: browserSources.inputs[i].inputName})
-            browserSources.inputs[i] = Object.assign(browserSources.inputs[i], sourceSettings)
-        }
-        console.log(browserSources)
-
-        for( let i = 0; i < browserSources.inputs.length; i++){
-            const parentElement = document.getElementById("browserSources");
-            parentElement.innerHTML += `<form class="form-grid-browser">
-                    <fieldset>
-                        <legend>${browserSources.inputs[i].inputName}:</legend>
-                        <label for="${browserSources.inputs[i].inputName}">URL:</label>
-                        <input style=" width: 100%" type="text" id="${browserSources.inputs[i].inputName}" name="${browserSources.inputs[i].inputName}" value="${browserSources.inputs[i].inputSettings?.url}" />
-                        <p></p><input type="button" id="button-${browserSources.inputs[i].inputName}"  onclick="modifyBrowser()" value="Modify" />
-                    </fieldset>
-                </form>`;
-        }
-    }
-
-    async function modifyBrowser(){
-
-        const browser = event.target.id.replace("button-","");
-        const browserURL = document.getElementById(event.target.id.replace("button-","")).value;
-        console.log(browserURL)
-        
-        await obs.call("SetInputSettings",{"inputName": browser,
-            "inputSettings":{
-                "url":``
+        async function getBrowserSource() {
+            //get the browser sources from OBS
+            const browserSources = await obs.call("GetInputList", { inputKind: 'browser_source' })
+            //get the browser settings from OBS
+            for (let i = 0; i < browserSources.inputs.length; i++) {
+                const sourceSettings = await obs.call("GetInputSettings", { inputName: browserSources.inputs[i].inputName })
+                browserSources.inputs[i] = Object.assign(browserSources.inputs[i], sourceSettings)
             }
-        })
-        
-        await obs.call("SetInputSettings",{"inputName": browser,
-            "inputSettings":{
-                "url":`${browserURL}`
+
+            //create input forms for each browser
+            for (let i = 0; i < browserSources.inputs.length; i++) {
+                const browserSettings = browserSources.inputs[i].inputSettings;
+
+                console.log(browserSettings)
+                const urlType = browserSettings.is_local_file === true ? 'local_file' : 'url';
+                browserLocation = urlType === "local_file" ? browserSettings.local_file : browserSettings.url
+                console.log(urlType, "browserLocation", typeof browserLocation, browserLocation)
+                //check if the browser source is a local file
+                if(browserSettings.is_local_file === true){
+                    //if protocol is included
+                    if(browserLocation.startsWith("file://")){
+                        browserURL =  encodeURI(browserSettings.local_file) 
+                    }else{
+                        browserURL =  encodeURI('file://' + browserSettings.local_file) 
+                    }
+                }
+                else{
+                    if(browserLocation.startsWith("http")){
+                        browserURL = encodeURI(browserSettings.url);
+                    }else{
+                        browserURL = encodeURI('http://' + browserSettings.url);
+                    }
+                }
+                const urlObject = new URL(browserURL);
+                const searchParams = new URLSearchParams(urlObject.search);
+                const urlHostPath = `${urlObject.protocol}//${urlObject.hostname}${urlObject.pathname}`;
+                console.log(urlObject)
+                let browserQueryParameterHTML = "";
+
+                //get query parameter values
+                if (browserURL.includes('?')) {
+                    searchParams.forEach((value, key) => {
+                        browserQueryParameterHTML += `
+                        <div class="form-grid-browser-card-div">
+                            <label for="${browserSources.inputs[i].inputName}-${key}">${key}:</label>
+                            <input type="text" id="${browserSources.inputs[i].inputName}-${key}" name="${browserSources.inputs[i].inputName}-${key}"  data-key="${key}" value="${value}" />
+                        </div>`
+                    });
+                }
+
+                const parentElement = document.getElementById("browserSources");
+                parentElement.innerHTML += `
+                    <form class="form-grid-browser">
+                        <div class="form-grid-browser-card">
+                            <fieldset>
+                                <legend>${browserSources.inputs[i].inputName}:</legend>
+                                    <div class="form-grid-browser-card-div">
+                                        <label for="${browserSources.inputs[i].inputName}-host">${urlType}</label>
+                                        <input type="text" id="${browserSources.inputs[i].inputName}-host" data-is-local-file=${browserSettings.is_local_file} name="${browserSources.inputs[i].inputName}-host" value="${urlHostPath}" required />
+                                    </div>
+                                <div id="queryParams-${i}">
+                                    </div>
+                            </fieldset>
+                        </div>
+                    </form>
+                                        `
+                if (browserQueryParameterHTML.length > 0) {
+                    document.getElementById(`queryParams-${i}`).innerHTML = `                    
+                    <details>
+                        <summary>Query Parameters</summary>
+                        ${browserQueryParameterHTML}    
+                        <p></p><input type="submit" id="button-${browserSources.inputs[i].inputName}"  onclick="modifyBrowser()" value="Modify" />
+                    </details>`
+                } else {
+                    document.getElementById(`queryParams-${i}`).innerHTML = `                    
+                        <p></p><input type="submit" id="button-${browserSources.inputs[i].inputName}"  onclick="modifyBrowser()" value="Modify" />
+                    `
+                }
             }
-        })
-    }
+        }
+
+        async function modifyBrowser() {
+
+            if (event.target.form[1].value.length > 0) {
+                event.preventDefault()
+                const browser = event.target.id.replace("button-", "");
+                const urlType = event.target.form[1].dataset.isLocalFile === 'true' ? 'local_file' : 'url';
+
+                let browserURL = event.target.form[1].value;
+                const queryParams = event.target.form;
+
+                if (event.target.form.length > 3) {
+                    browserURL += `?${event.target.form[2].dataset.key}=${event.target.form[2].value}`
+                    for (let i = 3; i < event.target.form.length - 1; i++) {
+                        //append query parameters to host. 
+                        browserURL += `&${event.target.form[i].dataset.key}=${event.target.form[i].value}`
+                    }
+                }
+
+                const settings = { [urlType] : ``}
+
+                await obs.call("SetInputSettings", {
+                    "inputName": browser,
+                    "inputSettings": {
+                        [urlType]: ``
+                    }
+                })
+
+                await obs.call("SetInputSettings", {
+                    "inputName": browser,
+                    "inputSettings": {
+                        [urlType]: `${browserURL}`
+                    }
+                })
+            } else {
+                event.target.form[1].setCustomValidity('Enter the page location');
+            }
+        }
 
     </script>
     <script>
@@ -309,6 +378,7 @@ getBrowserSource();
             }
             return value;
         }
+
     </script>
 </body>
 

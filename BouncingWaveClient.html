@@ -17,17 +17,18 @@
     <!-- <script src="obs_webSocket_details/startConnection.js"></script> -->
     <script>
         let t;
-        const obs = new OBSWebSocket();
+        //moved to obsConnect.js
+        // const obs = new OBSWebSocket();
 
-        window.addEventListener(`ws-details`, async function (event) {
-            //event wss details
-            console.log("message received: ", event)
-            await wsConnect(event.detail.wssDetails);
-        })
+        // window.addEventListener(`ws-details`, async function (event) {
+        //     //event wss details
+        //     console.log("message received: ", event)
+        //     await wsConnect(event.detail.wssDetails);
+        // })
 
-        async function wsConnect(wssDetails) {
-            await connectOBS(wssDetails)
-        };
+        // async function wsConnect(wssDetails) {
+        //     await connectOBS(wssDetails)
+        // };
 
         window.addEventListener(`sheetsSlideTextLink`, async function (event) {
             //event wss details
