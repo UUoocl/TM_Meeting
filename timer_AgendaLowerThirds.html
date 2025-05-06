@@ -151,6 +151,18 @@
                 sceneItemEnabled: false
             });
         }
+
+		function vdoMessage(message){
+			console.log(message)
+			console.log(JSON.parse(message.msg))
+			const msg = JSON.parse(JSON.parse(message.msg))
+			console.log("message", typeof msg, msg)
+			console.log("key", Object.keys(msg)[0])
+			if(Object.keys(msg)[0] === 'setColor'){
+				changeAgendaItem();
+			}
+
+		}
 	</script>
 </body>
 

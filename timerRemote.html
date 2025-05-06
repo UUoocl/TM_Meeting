@@ -183,15 +183,16 @@
 
     <script id="vdoSend">
         function sendCommandToOBS(command) {
-            var iframe = document.getElementById("obsCommander");
+            const iframe = document.getElementById("vdoIframe");
             if (iframe) {
+                console.log("message to OBS: ", JSON.stringify(command));
                 //iframe.contentWindow.postMessage({ "sendData": command }, '*');
                 iframe.contentWindow.postMessage({"sendChat": JSON.stringify(command)}, '*');
             }
         }   
 
         // Example buttons for starting and stopping a broadcast
-        let messageObj = { "from receiver1": "label?", "item2": "more cool" }
+        let messageObj = { "from receiver1": "label?", "item2": "more" }
         function startBroadcast() { sendCommandToOBS(`${JSON.stringify(messageObj)}`); }
         function stopBroadcast() { sendCommandToOBS('StopStreaming'); }
     </script>
@@ -320,8 +321,9 @@
                         /* google.script.run.setColor("Red", varNames.indexOf('Color')) */
                         sendCommandToOBS(`{"setColor": "Red"}`);
                         break;
-                    case (minutes == timeYellowMinutes && seconds == timeYellowSeconds):
-                        console.log("matched yellow")
+                        case (minutes == timeYellowMinutes && seconds == timeYellowSeconds):
+                            console.log("matched yellow")
+                            sendCommandToOBS(`{"setColor": "Yellow"}`);
                         /* google.script.run.setColor("Yellow", varNames.indexOf('Color')) */
                         break;
                     case (minutes == timeGreen && seconds == 0):
@@ -405,10 +407,10 @@
 
 
             setupTimer();
-            document.getElementById('greenButton').onclick = () => { google.script.run.setColor("Green", varNames.indexOf('Color')) };
-            document.getElementById('yellowButton').onclick = () => { google.script.run.setColor("Yellow", varNames.indexOf('Color')) };
-            document.getElementById('redButton').onclick = () => { google.script.run.setColor("Red", varNames.indexOf("Color")) };
-            document.getElementById('whiteButton').onclick = () => { google.script.run.setColor("White", varNames.indexOf('Color')) };
+            document.getElementById('greenButton').onclick = () => { sendCommandToOBS(`{"setColor": "Green"}`)};
+            document.getElementById('yellowButton').onclick = () => { sendCommandToOBS(`{"setColor": "Yellow"}`); };
+            document.getElementById('redButton').onclick = () => { sendCommandToOBS(`{"setColor": "Red"}`); };
+            document.getElementById('whiteButton').onclick = () => { sendCommandToOBS(`{"setColor": "White"}`); };
 
         }
 

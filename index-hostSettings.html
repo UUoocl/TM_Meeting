@@ -220,8 +220,10 @@
                     if (sources.sceneItems[source].isGroup === true) {
                         const groupSources = await obs.call("GetGroupSceneItemList", { sceneName: sources.sceneItems[source].sourceName })
                         for (let groupSource = 0; groupSource < groupSources.sceneItems.length; groupSource++) {
+                            if (groupSources.sceneItems[groupSource].sourceType === 'OBS_SOURCE_TYPE_INPUT') {
                             const groupSourceSettings = await obs.call("GetInputSettings", { inputName: groupSources.sceneItems[groupSource].sourceName })
                             groupSources.sceneItems[groupSource] = Object.assign(groupSources.sceneItems[groupSource], groupSourceSettings)
+                            }
                         }
                         sources.sceneItems[source] = Object.assign(sources.sceneItems[source], groupSources)
                     }
