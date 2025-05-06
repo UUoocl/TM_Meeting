@@ -15,27 +15,27 @@
         }
 
         /* Variabes */
-        $orange: #ffa600;
+        /* $orange: #ffa600;
         $grey: #f3f3f3;
         $white: #fff;
-        $base-color: $orange ;
+        $base-color: $orange ; */
 
         /* Mixin's */
-        @mixin transition {
+        /* @mixin transition {
             -webkit-transition: all 0.5s ease-in-out;
             -moz-transition: all 0.5s ease-in-out;
             transition: all 0.5s ease-in-out;
-        }
+        } */
 
-        @mixin corners ($radius) {
+        /* @mixin corners ($radius) {
             -moz-border-radius: $radius;
             -webkit-border-radius: $radius;
             border-radius: $radius;
             -khtml-border-radius: $radius;
-        }
+        } */
 
         body {
-            background: $base-color;
+            /* background: $base-color; */
             font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
             height: 100%;
         }
@@ -56,9 +56,9 @@
 
         .timerButton {
             @include corners (5px);
-            background: $base-color;
-            color: $white;
-            border: solid 1px $white;
+            /* background: $base-color; */
+            /* color: $white; */
+            /* border: solid 1px $white; */
             text-decoration: none;
             cursor: pointer;
             font-size: 1.0em;
@@ -69,9 +69,9 @@
 
             &:hover {
                 @include transition;
-                background: $white;
+                /* background: $white;
                 border: solid 1px $white;
-                color: $base-color;
+                color: $base-color; */
             }
         }
 
@@ -87,14 +87,14 @@
 
 
         .colorButton {
-            align: center;
+            text-align: center;
             width: 50px;
             padding: 0;
             margin: 5px;
         }
 
         .cameraButton {
-            align: left;
+            text-align: left;
             width: auto;
             padding: 0;
             margin: 5px;
@@ -121,20 +121,21 @@
                 <button class="colorButton" id="whiteButton" style="background:white">W</button>`
             </fieldset>
         </div>
-
+        
         <h1 id="SectionTitle">Timer App</h1>
         <span id="minutes">00</span>:<span id="seconds">00</span></p>
         <button class="timerButton" id="button-start">Start</button>
         <!-- <button id="button-stop">Stop</button> -->
         <button class="timerButton" id="button-reset">Next</button>
-    </div>
-    <div id="agenda-table" style="z-index: 0"></div>
-
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.6.0/dist/js/tabulator.min.js"></script>
+        </div>
+        <div id="agenda-table" style="z-index: 0"></div>
+        
+        <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.6.0/dist/js/tabulator.min.js"></script>
+        <script src="lib/getSheetsData.js"></script>
     
-    <script id="load">
+    <script id="vdoView">
         // This initial code is used to listen for messages via VDO.Ninja's iframe API for incoming p2p data.
-
+        let iframe;
         // Embedding VDO.Ninja iframe for receiving commands
         window.onload = function () {
             const paramsString = window.location.search;
@@ -144,45 +145,50 @@
             let VDO_PW = searchParams.get("vdoPW");
             let FULL_URL = `https://vdo.ninja/?statsinterval=20000&datamode&label=remoteController&view=${VDO_ID}&pw=${VDO_PW}`;
 
-            var iframe = document.createElement("iframe");
+            iframe = document.createElement("iframe");
             // iframe.src = "https://vdo.ninja/?datamode&password=secret&view=" + streamID +"&label=OBS";
             iframe.src = FULL_URL;
             //iframe.style.display = "none"; // Hide the iframe
-            iframe.id = "obsCommander";
+            iframe.id = "vdoIframe";
             document.body.appendChild(iframe);
+
+            getSheetData();
         };
     </script>
 
-    <script id="receive">
-        // Setup to receive commands from the sender page
-        window.addEventListener("message", function (e) {
-            console.log(e)
-            if ("dataReceived" in e.data) {
-
-                var command = e.data.dataReceived;
-
-                // Handle the received command (e.g., start or stop broadcast)
-                // This part will involve sending commands to OBS via WebSocket
-                console.log("Received command:", command);
-
-                // Example: if(command === "startBroadcast") { /* Start OBS broadcast */ }
-                // You will need to implement WebSocket communication here.
-
-                //      sendCommandToOBS(command, {});
-                document.getElementById("log").innerHTML += "<br />Received command:" + command;
-
-            }
+    <script id="vdoReceive">
+        window.addEventListener("message", function (event) {
+            console.log(event)
+            //if iframe
+            if (event.source !== iframe.contentWindow) {
+                console.log("non vdo event", event)
+                if ("dataReceived" in event.data) {
+            return
+        } // reject messages send from other iframes
+        else {
+            console.log("vdo event", event)
+            // Setup to receive commands from the sender page
+                    var command = event.data.dataReceived;
+                    // Handle the received command (e.g., start or stop broadcast)
+                    // This part will involve sending commands to OBS via WebSocket
+                    console.log("Received command:", command)
+                    // Example: if(command === "startBroadcast") { /* Start OBS broadcast */ }
+                    // You will need to implement WebSocket communication here.
+                    //      sendCommandToOBS(command, {});
+                    document.getElementById("log").innerHTML += "<br />Received command:" + command;
+        }
+        }
         });
     </script>
 
-    <script id="send">
+    <script id="vdoSend">
         function sendCommandToOBS(command) {
             var iframe = document.getElementById("obsCommander");
             if (iframe) {
-                iframe.contentWindow.postMessage({ "sendData": command }, '*');
+                //iframe.contentWindow.postMessage({ "sendData": command }, '*');
+                iframe.contentWindow.postMessage({"sendChat": JSON.stringify(command)}, '*');
             }
-        }
-
+        }   
 
         // Example buttons for starting and stopping a broadcast
         let messageObj = { "from receiver1": "label?", "item2": "more cool" }
@@ -190,9 +196,7 @@
         function stopBroadcast() { sendCommandToOBS('StopStreaming'); }
     </script>
    
-   
-   
-    <script>
+    <script >
         var startDateTime, endDateTime
         var table, varID, Interval, varSection, varNames, varName, varMinutes;
         var seconds, minutes;
@@ -202,8 +206,8 @@
 
         async function pageLoad() {
             //setupTimer()
-            await getVariables();
-            loadData();
+            //await getVariables();
+            //loadData();
         }
 
         function setupTimer() {
@@ -244,15 +248,15 @@
                     const stopTime = document.getElementById("minutes").innerHTML + ":" + document.getElementById("seconds").innerHTML
                     table.updateData([{ id: varID, Duration: stopTime }]);
                     console.log(varID)
-                    google.script.run.AddRecordToResultsSheet({
-                        Section: varSection,
-                        Minutes: varMinutes,
-                        Name: varName,
-                        Start: startDateTime,
-                        End: endDateTime,
-                        Duration: stopTime,
-                        RowID: varID
-                    });
+                    // google.script.run.AddRecordToResultsSheet({
+                    //     Section: varSection,
+                    //     Minutes: varMinutes,
+                    //     Name: varName,
+                    //     Start: startDateTime,
+                    //     End: endDateTime,
+                    //     Duration: stopTime,
+                    //     RowID: varID
+                    // });
                     clearInterval(Interval);
                 }
 
@@ -312,16 +316,18 @@
                 console.log(minutes, timeGreen, minutes == timeGreen, minutes == timeYellowMinutes)
                 switch (true) {
                     case (minutes >= timeRed && seconds == 0):
-                        console.log("matched red")
-                        google.script.run.setColor("Red", varNames.indexOf('Color'))
+                        console.log("matched red");
+                        /* google.script.run.setColor("Red", varNames.indexOf('Color')) */
+                        sendCommandToOBS(`{"setColor": "Red"}`);
                         break;
                     case (minutes == timeYellowMinutes && seconds == timeYellowSeconds):
                         console.log("matched yellow")
-                        google.script.run.setColor("Yellow", varNames.indexOf('Color'))
+                        /* google.script.run.setColor("Yellow", varNames.indexOf('Color')) */
                         break;
                     case (minutes == timeGreen && seconds == 0):
                         console.log("matched green")
-                        google.script.run.setColor("Green", varNames.indexOf('Color'))
+                        sendCommandToOBS(`{"setColor": "Green"}`);
+                        /* google.script.run.setColor("Green", varNames.indexOf('Color')) */
                         break;
                 }
             }
@@ -329,40 +335,39 @@
 
         }
 
-        function loadData() {
+        function loadData(headers, sheetData) {
 
                     //if data successfully returned
-                    console.log("jsData", jsData);
                     //create Tabulator on DOM element with id "example-table"
                     table = new Tabulator("#agenda-table", {
                         height: 2000, // set height of table (in CSS or here)
                         rowHeight: 50,
-                        data: jsData, //assign data to table
+                        data: sheetData, //assign data to table
                         layout: "fitColumns", //fit columns to width of table (optional)
                         columns: [
                             //Define Table Columns
                             {
-                                title: "Section",
-                                field: "Section",
+                                title: headers[1],
+                                field: headers[1],
                                 width: 150,
                                 headerSort: false,
                             },
                             {
-                                title: "Minutes",
-                                field: "Minutes",
+                                title: headers[2],
+                                field: headers[2],
                                 width: 70,
                                 hozAlign: "left",
                                 headerSort: false,
                             },
                             {
-                                title: "Name",
-                                field: "Name",
+                                title: headers[3],
+                                field: headers[3],
                                 headerSort: false,
                                 width: 150,
                             },
                             {
-                                title: "Duration",
-                                field: "Duration",
+                                title: headers[4],
+                                field: headers[4],
                                 width: 150,
                                 sorter: "date",
                                 hozAlign: "center",
@@ -380,6 +385,8 @@
 
                     //Clicked table row
                     table.on("rowClick", function (e, row) {
+
+                        console.log("e=index", row.getPosition())
                         console.log("e", e)
                         console.log("row", row)
                         table.deselectRow();
@@ -411,21 +418,21 @@
             varSection = row.getData().Section;
             varMinutes = row.getData().Minutes;
             varName = row.getData().Name;
-            console.log("row dets", varSection, varMinutes, varName);
+            console.log("row details", varSection, varMinutes, varName);
 
             const varDuration = row.getData().Duration
-
+            console.log("dur",row)
             varID = row.getData().id;
 
-            google.script.run.setCurrentSection({
-                Section: varSection
-                //Minutes: varMinutes,
-                //Name: varName,
-            }, varNames.indexOf('TimerSection'));
+            // google.script.run.setCurrentSection({
+            //     Section: varSection
+            //     //Minutes: varMinutes,
+            //     //Name: varName,
+            // }, varNames.indexOf('TimerSection'));
 
-            google.script.run.setColor("White", varNames.indexOf('Color'))
-            google.script.run.setColor(varMinutes, varNames.indexOf('TimerMinutes'))
-            google.script.run.setColor(varName, varNames.indexOf('TimerName'))
+            // google.script.run.setColor("White", varNames.indexOf('Color'))
+            // google.script.run.setColor(varMinutes, varNames.indexOf('TimerMinutes'))
+            // google.script.run.setColor(varName, varNames.indexOf('TimerName'))
 
             console.log(`row : ${row}`);
             console.log(`row data: ${row.getData()}`);

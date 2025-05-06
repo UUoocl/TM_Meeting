@@ -11,7 +11,9 @@
 
       let VDO_ID = searchParams.get("vdoID");
       let VDO_PW = searchParams.get("vdoPW");
-      let FULL_URL = `https://vdo.ninja/?statsinterval=20000&datamode&label=remoteController&view=${VDO_ID}&pw=${VDO_PW}`;
+      let FULL_URL = `https://vdo.ninja/?statsinterval=20000&datamode&label=remoteController&view=${VDO_ID}`;
+      
+      //&pw=${VDO_PW}`
 
         var iframe = document.createElement("iframe");
         // iframe.src = "https://vdo.ninja/?datamode&password=secret&view=" + streamID +"&label=OBS";
