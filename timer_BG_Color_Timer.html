@@ -91,12 +91,11 @@
 		</div>
 	</div>
 
-	<script src='lib/obs-ws.js'></script>
-    <script src='lib/obsConnect.js'></script>
+	<!-- <script src='lib/obs-ws.js'></script>
+    <script src='lib/obsConnect.js'></script> -->
 	<script src="dist/reveal.js"></script>
 
 	<script>
-
 		// Also available as an ES module, see:
 		// https://revealjs.com/initialization/
 		Reveal.initialize({
@@ -109,7 +108,21 @@
 			margin: 0.0,
 		});
 
+		window.addEventListener(`colorChange`, function (event) {
+            //change color command
+			console.log("message received: ", event)
+			if(event.detail.msg.setColor){
+				switch(event.detail.msg.setColor){
+					case 'Green': Reveal.slide(1); break;
+					case 'Yellow': Reveal.slide(2); break;
+					case 'Red': Reveal.slide(3); break;
+					case 'White': Reveal.slide(0); break;
+				}
+			}
+			
+		})
 	</script>
+
 </body>
 
 </html>

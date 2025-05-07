@@ -203,12 +203,27 @@
         var seconds, minutes;
         var timeGreen, timeYellow, timeRed, times, timeYellowMinutes, timeYellowSeconds
         var currentTableRow = 1;
+        let timerReport = {};
         document.addEventListener("DOMContentLoaded", pageLoad);
 
         async function pageLoad() {
+            //configure local storage
+            setLocalStorage();
             //setupTimer()
             //await getVariables();
             //loadData();
+        }
+
+        function setLocalStorage(){
+            let date = new Date;
+            date = `${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,0)}${date.getDate().toString().padStart(2,0)}`
+            console.log(date)
+            if(date !== localStorage.getItem("timerReportDate")){
+                localStorage.setItem("timerReportDate", date);
+                localStorage.setItem("timerReport", ``);
+            } else{ timerReport = JSON.parse(localStorage.getItem("timerReport"))}
+
+
         }
 
         function setupTimer() {
@@ -287,8 +302,10 @@
 
                 //select next table row
                 currentTableRow += 1;
-                table.deselectRow();
-                table.selectRow(table.getRowFromPosition(currentTableRow)); //return row in the visible table datacurrentTableRow);
+                console.log(currentTableRow)
+                //table.deselectRow();
+                selectTableRow(currentTableRow);
+                //table.selectRow(table.getRowFromPosition(currentTableRow)); //return row in the visible table datacurrentTableRow);
                 //activate timer?
             }
 
@@ -339,71 +356,74 @@
 
         function loadData(headers, sheetData) {
 
-                    //if data successfully returned
-                    //create Tabulator on DOM element with id "example-table"
-                    table = new Tabulator("#agenda-table", {
-                        height: 2000, // set height of table (in CSS or here)
-                        rowHeight: 50,
-                        data: sheetData, //assign data to table
-                        layout: "fitColumns", //fit columns to width of table (optional)
-                        columns: [
-                            //Define Table Columns
-                            {
-                                title: headers[1],
-                                field: headers[1],
-                                width: 150,
-                                headerSort: false,
-                            },
-                            {
-                                title: headers[2],
-                                field: headers[2],
-                                width: 70,
-                                hozAlign: "left",
-                                headerSort: false,
-                            },
-                            {
-                                title: headers[3],
-                                field: headers[3],
-                                headerSort: false,
-                                width: 150,
-                            },
-                            {
-                                title: headers[4],
-                                field: headers[4],
-                                width: 150,
-                                sorter: "date",
-                                hozAlign: "center",
-                                headerSort: false,
-                                editor: "input",
-                            },
-                        ],
-                    });
+            //if data successfully returned
+            //create Tabulator on DOM element with id "example-table"
+            table = new Tabulator("#agenda-table", {
+                height: 2000, // set height of table (in CSS or here)
+                rowHeight: 50,
+                data: sheetData, //assign data to table
+                layout: "fitColumns", //fit columns to width of table (optional)
+                columns: [
+                    //Define Table Columns
+                    {
+                        title: headers[1],
+                        field: headers[1],
+                        width: 150,
+                        headerSort: false,
+                    },
+                    {
+                        title: headers[2],
+                        field: headers[2],
+                        width: 70,
+                        hozAlign: "left",
+                        headerSort: false,
+                    },
+                    {
+                        title: headers[3],
+                        field: headers[3],
+                        headerSort: false,
+                        width: 150,
+                    },
+                    {
+                        title: headers[4],
+                        field: headers[4],
+                        width: 150,
+                        sorter: "date",
+                        hozAlign: "center",
+                        headerSort: false,
+                        editor: "input",
+                    },
+                ],
+            });
 
-                    //table built, select row 1
-                    table.on("tableBuilt", function () {
-                        table.deselectRow();
-                        table.selectRow(table.getRowFromPosition(1));
-                    });
+            //table built, select row 1
+            table.on("tableBuilt", function () {
+                table.deselectRow();
+                table.selectRow(table.getRowFromPosition(1));
+            });
 
-                    //Clicked table row
-                    table.on("rowClick", function (e, row) {
+            //Clicked table row
+            table.on("rowClick", function (e, row) {
 
-                        console.log("e=index", row.getPosition())
-                        console.log("e", e)
-                        console.log("row", row)
-                        table.deselectRow();
-                        table.selectRow(table.getRowFromPosition(row.getPosition()));
-                        //rowChanged(row)
-                    });
+                console.log("e=index", row.getPosition())
+                console.log("e", e)
+                console.log("row", row)
+                table.deselectRow();
+                table.selectRow(table.getRowFromPosition(row.getPosition()));
+                //rowChanged(row)
+            });
 
-                    //Button moved selected table row
-                    table.on("rowSelected", function (row) { rowChanged(row) });
+            //Button moved selected table row
+            table.on("rowSelected", function (row) { rowChanged(row) });
 
-                    //Duration manually changed
-                    table.on("cellEdited", function (cell) {
-                        console.log("cell changed Event", cell.getData())
-                        //Add new Results row
-                    })
+            //Duration manually changed
+            table.on("cellEdited", function (cell) {
+                console.log("row",cell.getRow().getPosition())
+                console.log("cell changed Event", cell.getData())
+                //refresh timer
+                table.deselectRow();
+                table.selectRow(cell.getRow().getPosition());
+            })
 
 
             setupTimer();
@@ -420,9 +440,16 @@
             varSection = row.getData().Section;
             varMinutes = row.getData().Minutes;
             varName = row.getData().Name;
-            console.log("row details", varSection, varMinutes, varName);
-
-            const varDuration = row.getData().Duration
+            const varDuration = row.getData().Duration;
+            console.log("row details", varSection, varMinutes, varName, varDuration);
+            const durationProp = "duration0";
+           
+            timerReport[varSection] = {};
+            timerReport[varSection][durationProp]= varDuration ;
+           
+            console.log("timerReportObject", timerReport)
+            localStorage.setItem("timerReport", JSON.stringify(timerReport))
+           
             console.log("dur",row)
             varID = row.getData().id;
 
@@ -433,6 +460,7 @@
             // }, varNames.indexOf('TimerSection'));
 
             // google.script.run.setColor("White", varNames.indexOf('Color'))
+            sendCommandToOBS(`{"setColor": "White"}`);
             // google.script.run.setColor(varMinutes, varNames.indexOf('TimerMinutes'))
             // google.script.run.setColor(varName, varNames.indexOf('TimerName'))
 
@@ -456,8 +484,10 @@
 
             var rowPos = row.getPosition();
             console.log(`row position: ${rowPos}`)
-            currentTableRow = rowPos;
-            console.log(`var currentTableRow position: ${currentTableRow}`)
+            console.log(`var currentTableRow position: ${rowPos-1}`)
+
+            //change lower third slide to match selected row
+            sendCommandToOBS(`{"setLowerThird": ${rowPos-1} }`);
         }
 
         function selectTableRow(row) {

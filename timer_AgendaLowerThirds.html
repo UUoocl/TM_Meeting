@@ -112,11 +112,11 @@
 
 		window
 
-		async function changeAgendaItem(){
+		async function changeAgendaItem(slideID){
 			//hide
 			disableSource('Agenda Scene', 'agenda Lower Thirds').then(async () =>
 				await setTimeout( () => {
-					Reveal.next();
+					Reveal.slide(slideID);
 					//show
 					enableSource('Agenda Scene', 'agenda Lower Thirds');
 				}
@@ -152,16 +152,26 @@
             });
         }
 
-		function vdoMessage(message){
+		async function vdoMessage(message){
 			console.log(message)
 			console.log(JSON.parse(message.msg))
 			const msg = JSON.parse(JSON.parse(message.msg))
 			console.log("message", typeof msg, msg)
 			console.log("key", Object.keys(msg)[0])
 			if(Object.keys(msg)[0] === 'setColor'){
-				changeAgendaItem();
+				await obs.call("CallVendorRequest", {
+					vendorName: "obs-browser",
+                    requestType: "emit_event",
+                    requestData: {
+						event_name: "colorChange",
+                        event_data: { msg },
+                    },
+                });
 			}
-
+			
+			if(Object.keys(msg)[0] === 'setLowerThird'){
+			  changeAgendaItem(msg.setLowerThird);
+			}
 		}
 	</script>
 </body>
