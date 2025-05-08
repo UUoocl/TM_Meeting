@@ -121,7 +121,7 @@
                 <button class="colorButton" id="whiteButton" style="background:white">W</button>`
             </fieldset>
         </div>
-        
+
         <h1 id="SectionTitle">Timer App</h1>
         <span id="minutes">00</span>:<span id="seconds">00</span></p>
         <button class="timerButton" id="button-start">Start</button>
@@ -135,7 +135,7 @@
     
     <script id="vdoView">
         // This initial code is used to listen for messages via VDO.Ninja's iframe API for incoming p2p data.
-        let iframe;
+        let iframe, gFormID;
         // Embedding VDO.Ninja iframe for receiving commands
         window.onload = function () {
             const paramsString = window.location.search;
@@ -143,6 +143,8 @@
 
             let VDO_ID = searchParams.get("vdoID");
             let VDO_PW = searchParams.get("vdoPW");
+            gFormID = searchParams.get("gf");
+            console.log("form ID", gFormID)
             let FULL_URL = `https://vdo.ninja/?statsinterval=20000&datamode&label=remoteController&view=${VDO_ID}&pw=${VDO_PW}`;
 
             iframe = document.createElement("iframe");
@@ -217,8 +219,8 @@
         function setLocalStorage(){
             let date = new Date;
             date = `${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,0)}${date.getDate().toString().padStart(2,0)}`
-            console.log(date)
-            if(date !== localStorage.getItem("timerReportDate")){
+            console.log("timer_local Esists",localStorage.getItem('timerReport'))
+            if(date !== localStorage.getItem("timerReportDate") || localStorage.getItem('timerReport') === null){
                 localStorage.setItem("timerReportDate", date);
                 localStorage.setItem("timerReport", ``);
             } else{ timerReport = JSON.parse(localStorage.getItem("timerReport"))}
@@ -256,7 +258,7 @@
                     Interval = setInterval(startTimer, 1000);
                     return;
                 }
-
+                
                 if (document.getElementById('button-start').innerHTML === 'Stop') {
                     document.getElementById('button-start').innerHTML = 'Start';
                     buttonReset.style.visibility = "visible";
@@ -265,15 +267,16 @@
                     table.updateData([{ id: varID, Duration: stopTime }]);
                     console.log(varID)
                     // google.script.run.AddRecordToResultsSheet({
-                    //     Section: varSection,
-                    //     Minutes: varMinutes,
-                    //     Name: varName,
-                    //     Start: startDateTime,
-                    //     End: endDateTime,
-                    //     Duration: stopTime,
-                    //     RowID: varID
-                    // });
+                        //     Section: varSection,
+                        //     Minutes: varMinutes,
+                        //     Name: varName,
+                        //     Start: startDateTime,
+                        //     End: endDateTime,
+                        //     Duration: stopTime,
+                        //     RowID: varID
+                        // });
                     clearInterval(Interval);
+                    selectTableRow(currentTableRow);
                 }
 
 
@@ -355,7 +358,19 @@
         }
 
         function loadData(headers, sheetData) {
-
+            if(localStorage.getItem("timerReport")){
+                const local_timerReport = JSON.parse(localStorage.getItem("timerReport"))
+                console.log("sheet", sheetData)
+                sheetData.forEach( (row, index) => {
+                    console.log("sheetData row",typeof row, row)    
+                    console.log("local report row",typeof index, index)    
+                    if(local_timerReport.hasOwnProperty(row.Section)){
+                        if(local_timerReport[row.Section].duration !== undefined){
+                            row.Duration = local_timerReport[row.Section].duration   
+                        }  
+                    }
+                });
+            }
             //if data successfully returned
             //create Tabulator on DOM element with id "example-table"
             table = new Tabulator("#agenda-table", {
@@ -442,7 +457,7 @@
             varName = row.getData().Name;
             const varDuration = row.getData().Duration;
             console.log("row details", varSection, varMinutes, varName, varDuration);
-            const durationProp = "duration0";
+            const durationProp = "duration";
            
             timerReport[varSection] = {};
             timerReport[varSection][durationProp]= varDuration ;
@@ -505,8 +520,48 @@
         }
 
     </script>
+
+<script id="submit Google Form">
+    
+    function submitGoogleForm() {
+        // https://dev.to/utkarshdhiman48/custom-frontend-for-google-form-456l
+        const url = `https://docs.google.com/forms/d/e/${gFormID}/formResponse`
+        const formData = getInputData();
+        
+        fetch(url, {
+            method: 'POST',
+            mode: "no-cors",
+            header: {
+                'Content-Type': 'application/json'
+            },
+            body: formData,
+        })
+            .then((response) => {
+                if (response) {
+                    alert('Form submitted successfully!');
+                } else {
+                    alert('Error submitting form.');
+                }
+            })
+            .catch((error) => {
+                console.error('There was an error:', error);
+                alert('Network error. Please try again later.');
+            });
+    };
+
+    //populating input data
+    function getInputData() {
+        let dataToPost = new FormData(); //formdata API
+
+        //fill name attributes to corresponding values
+        dataToPost.append("entry.1973965687", localStorage.getItem('timerReport'));
+        return dataToPost;
+    }
+</script>
+
     <button onclick="startBroadcast()">Start Broadcast</button>
     <button onclick="stopBroadcast()">Stop Broadcast</button>
+    <button onclick="submitGoogleForm()">Submit Report</button>
     <div id="log"></div>
 </body>
 
