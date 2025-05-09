@@ -30,16 +30,17 @@
                     <label for="collectionName">Enter OBS Collection name:</label>
                     <input type="text" id="collectionName" name="collectionName" value="UUinsome" />
                     <label for="IP">Enter IP address or "localhost":</label>
-                    <input type="text" id="IP" name="IP" value="localhost" />
+                    <input type="text" id="IP" name="IP" value="localhost" disabled/>
                     <label for="Port">Enter Port Number:</label>
                     <input type="text" id="Port" name="Port" value="4455" />
                     <label for="PW">Enter Password:</label>
                     <input type="password" id="PW" name="PW" value="" />
                     <label for="virtualCameraOn">Start Virtual Camera:</label>
-                    <input type="checkbox" id="virtualCameraOn" name="virtualCameraOn" checked />
+                    <input type="checkbox" id="virtualCameraOn" name="virtualCameraOn" disabled unchecked />
                     <label for="Debug">Debug mode:</label>
                     <input type="checkbox" id="Debug" name="Debug" />
                     <p></p><input class="form-button" type="button" id="openOBSbutton" value="Open OBS" />
+                    <span><p id="obsOpenCommand"></p></span>
                 </form>
             </div>
         </section>
@@ -88,6 +89,11 @@
             document
                 .getElementById("configName")
                 .addEventListener('input', configSelected);
+
+            document
+                .getElementById("obsData")
+                .addEventListener('change', obsLaunchCommand);
+            obsLaunchCommand();
         })
         //button functions            
         function openOBS() {
@@ -201,7 +207,38 @@
                 //Actions when the input doesn't match any datalist option
             }
         }
+        
+        function obsLaunchCommand(event){
+            console.log(window.navigator.platform)
+            const obsParameters = document.getElementById("obsData")
+            console.log("Parameters",obsParameters)
+            console.log("Parameters",obsParameters.PW.value)
+            console.log("Parameters",obsParameters.Debug.checked)
+            let commandString = 'open -n -a "';
+            commandString += obsParameters.obsName.value;
+            commandString += '" --args --profile "';
+            commandString += obsParameters.profileName.value ;
+            commandString += '" --collection "';
+            commandString += obsParameters.collectionName.value ;
+            commandString += '" --websocket_port "';
+            commandString += obsParameters.Port.value ;
+            commandString += '" --websocket_password "';
+            commandString += obsParameters.PW.value ;
+            commandString += '" --multi';
+            if(obsParameters.Debug.checked){
+                commandString += ' --remote-debugging-port=9222 --remote-allow-origins=http://localhost:9222';
+            }
+            
+        //   --websocket_password "Dictionary (password)"
+            // const changedElement = event.target;
+            // const elementName = changedElement.name;
+            // const newValue = changedElement.value;
 
+            // console.log(`Element ${elementName} changed to: ${newValue}`);
+            document.getElementById('obsOpenCommand').innerText = commandString
+        }
+
+//Get OBS Collection
         let collection = new Object
         let browserSources = [];
         async function getOBScollection() {

@@ -24,6 +24,12 @@ body {
   grid-template-columns: 300px 200px; 
 }
 
+.form-grid span{
+  display:grid;
+  width: 100%;
+  grid-template-columns: 500px; 
+}
+
 .form-grid-browser {
   display:grid;
   grid-template-columns: 100%; 
