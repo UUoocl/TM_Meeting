@@ -114,11 +114,11 @@
 
 		async function changeAgendaItem(slideID){
 			//hide
-			disableSource('Agenda Scene', 'agenda Lower Thirds').then(async () =>
+			disableSource('Agenda Scene', 'agenda Lower Thirds^').then(async () =>
 				await setTimeout( () => {
 					Reveal.slide(slideID);
 					//show
-					enableSource('Agenda Scene', 'agenda Lower Thirds');
+					enableSource('Agenda Scene', 'agenda Lower Thirds^');
 				}
 				, 300)		
 			)

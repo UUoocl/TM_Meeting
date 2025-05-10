@@ -143,7 +143,7 @@
 
             let VDO_ID = searchParams.get("vdoID");
             let VDO_PW = searchParams.get("vdoPW");
-            gFormID = searchParams.get("gf");
+            gFormID = searchParams.get("googleForm");
             console.log("form ID", gFormID)
             let FULL_URL = `https://vdo.ninja/?statsinterval=20000&datamode&label=remoteController&view=${VDO_ID}&pw=${VDO_PW}`;
 
@@ -219,7 +219,6 @@
         function setLocalStorage(){
             let date = new Date;
             date = `${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,0)}${date.getDate().toString().padStart(2,0)}`
-            console.log("timer_local Esists",localStorage.getItem('timerReport'))
             if(date !== localStorage.getItem("timerReportDate") || localStorage.getItem('timerReport') === null){
                 localStorage.setItem("timerReportDate", date);
                 localStorage.setItem("timerReport", ``);
@@ -265,7 +264,6 @@
                     endDateTime = GetDate()
                     const stopTime = document.getElementById("minutes").innerHTML + ":" + document.getElementById("seconds").innerHTML
                     table.updateData([{ id: varID, Duration: stopTime }]);
-                    console.log(varID)
                     // google.script.run.AddRecordToResultsSheet({
                         //     Section: varSection,
                         //     Minutes: varMinutes,
@@ -302,12 +300,11 @@
                 // appendSeconds.innerHTML = seconds;
                 // appendMinutes.innerHTML = minutes;
                 //disable start button
-
                 //select next table row
-                currentTableRow += 1;
-                console.log(currentTableRow)
+                //currentTableRow += 1;
+                console.log("Current Row Variable:",currentTableRow)
                 //table.deselectRow();
-                selectTableRow(currentTableRow);
+                selectTableRow(currentTableRow+1);
                 //table.selectRow(table.getRowFromPosition(currentTableRow)); //return row in the visible table datacurrentTableRow);
                 //activate timer?
             }
@@ -364,6 +361,7 @@
                 sheetData.forEach( (row, index) => {
                     console.log("sheetData row",typeof row, row)    
                     console.log("local report row",typeof index, index)    
+                    row.id = index+1;
                     if(local_timerReport.hasOwnProperty(row.Section)){
                         if(local_timerReport[row.Section].duration !== undefined){
                             row.Duration = local_timerReport[row.Section].duration   
@@ -452,6 +450,8 @@
         function rowChanged(row) {
 
             console.log("rowSelected", row.getData().id);
+            console.log("table object", table.getData());
+
             varSection = row.getData().Section;
             varMinutes = row.getData().Minutes;
             varName = row.getData().Name;
@@ -479,10 +479,9 @@
             // google.script.run.setColor(varMinutes, varNames.indexOf('TimerMinutes'))
             // google.script.run.setColor(varName, varNames.indexOf('TimerName'))
 
-            console.log(`row : ${row}`);
-            console.log(`row data: ${row.getData()}`);
             console.log(`row duration length ${varDuration}`)
-            console.log("Row " + row.getData().Section + " Clicked!!!!");
+            console.log("Row " + row.getData().Section + " selected");
+            console.log("Row Position " + row.getPosition() );
             //console.log("Row " + row.getRow())
 
             if (varDuration === undefined) { table.updateData([{ id: varID, Duration: "00:00" }]) };
@@ -500,15 +499,16 @@
             var rowPos = row.getPosition();
             console.log(`row position: ${rowPos}`)
             console.log(`var currentTableRow position: ${rowPos-1}`)
-
+            currentTableRow = row.getPosition();
             //change lower third slide to match selected row
+            
             sendCommandToOBS(`{"setLowerThird": ${rowPos-1} }`);
         }
 
         function selectTableRow(row) {
-            console.log("selectRow")
+            console.log("selectRow", row)    
             table.deselectRow();
-            table.selectRow(row);
+            table.selectRow(table.getRowFromPosition(row));
         }
 
         function GetDate() {
@@ -529,14 +529,16 @@
         const formData = getInputData();
         
         fetch(url, {
-            method: 'POST',
-            mode: "no-cors",
-            header: {
-                'Content-Type': 'application/json'
+            method:'Post',
+            mode:'no-cors',
+            headers:{
+                'Content-Type':'application/json'
             },
             body: formData,
+            redirect:"follow"
         })
             .then((response) => {
+                console.log(response)
                 if (response) {
                     alert('Form submitted successfully!');
                 } else {

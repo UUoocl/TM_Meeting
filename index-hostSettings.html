@@ -23,7 +23,7 @@
                     <datalist id="configNameValues">
 
                     </datalist>
-                    <label for="obsName">Enter OBS app name:</label>
+                    <label for="obsName" id="obsNameLabel">Enter OBS app name:</label>
                     <input type="text" id="obsName" name="obsName" value="OBS" />
                     <label for="profileName">Enter OBS Profile name:</label>
                     <input type="text" id="profileName" name="profileName" value="720vc" />
@@ -39,9 +39,12 @@
                     <input type="checkbox" id="virtualCameraOn" name="virtualCameraOn" disabled unchecked />
                     <label for="Debug">Debug mode:</label>
                     <input type="checkbox" id="Debug" name="Debug" />
-                    <p></p><input class="form-button" type="button" id="openOBSbutton" value="Open OBS" />
-                    <span><p id="obsOpenCommand"></p></span>
+                    <p></p><div id="openOBSbutton">
+                        <input class="form-button" type="button" value="Open OBS" />
+                    </div>
                 </form>
+                                 
+                <div><button id="copyCommand">Copy Command</button><input type="text" id="obsOpenCommand"/></div>
             </div>
         </section>
 
@@ -93,6 +96,13 @@
             document
                 .getElementById("obsData")
                 .addEventListener('change', obsLaunchCommand);
+
+                document
+                .getElementById("copyCommand")
+                .addEventListener('click', (e) => {
+                    console.log(e)
+                    copyCode(e.target.id, "obsOpenCommand", e.target.innerText)});
+
             obsLaunchCommand();
         })
         //button functions            
@@ -214,7 +224,14 @@
             console.log("Parameters",obsParameters)
             console.log("Parameters",obsParameters.PW.value)
             console.log("Parameters",obsParameters.Debug.checked)
-            let commandString = 'open -n -a "';
+            let commandString = '';
+            if(window.navigator.platform.startsWith("Mac")){
+                commandString = 'open -n -a "';
+            }else{
+                document.getElementById("openOBSbutton").hidden = true;
+                document.getElementById("obsNameLabel").innerText = "Enter OBS app name including path:"
+                commandString = '"';
+            }
             commandString += obsParameters.obsName.value;
             commandString += '" --args --profile "';
             commandString += obsParameters.profileName.value ;
@@ -235,7 +252,26 @@
             // const newValue = changedElement.value;
 
             // console.log(`Element ${elementName} changed to: ${newValue}`);
-            document.getElementById('obsOpenCommand').innerText = commandString
+            document.getElementById('obsOpenCommand').value = commandString
+        }
+
+        async function copyCode(triggerButton, elementToCopy, buttonText) {
+            event.preventDefault()
+         
+            const button = document.getElementById(triggerButton)
+            if(button.innerText.endsWith("Copied")){
+                return //copied
+            }else{
+                let copyText = document.getElementById(elementToCopy).value//"obsOpenCommand");
+                await navigator.clipboard.writeText(copyText);
+            }
+
+            // visual feedback that task is completed
+            button.innerText = `${buttonText} Copied`;
+
+            setTimeout(() => {
+                button.innerText = buttonText;
+            }, 7000);
         }
 
 //Get OBS Collection
@@ -278,6 +314,9 @@
         }
 
         async function getBrowserSource() {
+            //clear browser sources section
+            document.getElementById("browserSources").innerHTML ='';
+
             //get the browser sources from OBS
             const browserSources = await obs.call("GetInputList", { inputKind: 'browser_source' })
             //get the browser settings from OBS
@@ -312,7 +351,7 @@
                 }
                 const urlObject = new URL(browserURL);
                 const searchParams = new URLSearchParams(urlObject.search);
-                const urlHostPath = `${urlObject.protocol}//${urlObject.hostname}${urlObject.pathname}`;
+                const urlHostPath = `${urlObject.origin}${urlObject.pathname}`;
                 console.log(urlObject)
                 let browserQueryParameterHTML = "";
 
@@ -350,12 +389,15 @@
                         ${browserQueryParameterHTML}    
                         <p></p><input type="submit" id="button-${browserSources.inputs[i].inputName}"  onclick="modifyBrowser()" value="Modify" />
                     </details>`
+                    document.getElementById(`queryParams-${i}`).innerHTML += `<div><button id="remoteLink-${i}" onclick="copyCode('remoteLink-${i}', 'remoteControl-${i}', 'Copy Link')">Copy Link</button><input type="text" id="remoteControl-${i}" value="${browserLocation.replace(".html","_Remote.html")}"/></div>`;
+                    //document.getElementById(`queryParams-${i}`).innerHTML += `<div><button id="remoteLink-${i}" onclick="copyCode()">Copy Link</button><input type="text" id="remoteControl-${i}" value="${browserLocation.replace(".html","_Remote.html")}"/></div>`;
                 } else {
                     document.getElementById(`queryParams-${i}`).innerHTML = `                    
                         <p></p><input type="submit" id="button-${browserSources.inputs[i].inputName}"  onclick="modifyBrowser()" value="Modify" />
                     `
                 }
             }
+
         }
 
         async function modifyBrowser() {
@@ -370,7 +412,7 @@
 
                 if (event.target.form.length > 3) {
                     browserURL += `?${event.target.form[2].dataset.key}=${event.target.form[2].value}`
-                    for (let i = 3; i < event.target.form.length - 1; i++) {
+                    for (let i = 3; i < event.target.form.length - 2; i++) {
                         //append query parameters to host. 
                         browserURL += `&${event.target.form[i].dataset.key}=${event.target.form[i].value}`
                     }
@@ -391,6 +433,7 @@
                         [urlType]: `${browserURL}`
                     }
                 })
+                getBrowserSource();
             } else {
                 event.target.form[1].setCustomValidity('Enter the page location');
             }
