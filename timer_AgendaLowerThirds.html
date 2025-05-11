@@ -20,18 +20,18 @@
 		</div>
 	</div>
 
-	//OBS WebSocket Server
+	<!-- OBS WebSocket Server -->
 	<script src='lib/obs-ws.js'></script>
     <script src='lib/obsConnect.js'></script>
 	
-	//Reveal Slides
+	<!-- Reveal Slides -->
 	<script src="dist/reveal.js"></script>
 	<!-- <script src="dist/offline.js"></script> -->
 	
-	//Get Data from Google Sheet
+	<!-- Get Data from Google Sheet -->
     <script src='lib/getSheetsData.js'></script>
 
-	//Open VDO 
+	<!-- Open VDO  -->
 	<script src="lib/vdoSlideControls.js"></script>
     	
 	<!-- Initialize the presentation -->
@@ -45,6 +45,7 @@
 			controls: false,
 			transition: "slide",
 			backgroundTransition: "slide",
+			progress: false,
 		});
 		
 		Reveal.on('ready', event => {
@@ -52,8 +53,7 @@
 			getSheetData();
 		})
 
-		Reveal.on('change')
-
+		//called from the script getSheetData.js
 		function loadData(headers, data){
 			createSlides(data);
 		}
@@ -109,8 +109,6 @@
 			window.dispatchEvent(startVDO);
 			return;
 		}
-
-		window
 
 		async function changeAgendaItem(slideID){
 			//hide

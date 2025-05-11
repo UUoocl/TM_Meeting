@@ -412,7 +412,7 @@
 
                 if (event.target.form.length > 3) {
                     browserURL += `?${event.target.form[2].dataset.key}=${event.target.form[2].value}`
-                    for (let i = 3; i < event.target.form.length - 2; i++) {
+                    for (let i = 3; i < event.target.form.length - 3; i++) {
                         //append query parameters to host. 
                         browserURL += `&${event.target.form[i].dataset.key}=${event.target.form[i].value}`
                     }

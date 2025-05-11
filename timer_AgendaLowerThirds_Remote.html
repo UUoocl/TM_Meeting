@@ -223,8 +223,6 @@
                 localStorage.setItem("timerReportDate", date);
                 localStorage.setItem("timerReport", ``);
             } else{ timerReport = JSON.parse(localStorage.getItem("timerReport"))}
-
-
         }
 
         function setupTimer() {
@@ -354,6 +352,7 @@
 
         }
 
+        //called from the script getSheetData.js
         function loadData(headers, sheetData) {
             if(localStorage.getItem("timerReport")){
                 const local_timerReport = JSON.parse(localStorage.getItem("timerReport"))
