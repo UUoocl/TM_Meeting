@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Browser Controls</title>
+</head>
+<body>
+    <h1>OBS Browser Controls</h1>
+    <p>A browser source the gets instructions from the form the meeting variables google sheet</p>
+    <p id="sheetID">Data SheetID</p>
+    <p id="FormSummaryID">form Post SheetID</p>
+    <p id="timerFormID">timer form SheetID</p>
+    <p id="slideFormID">slide form SheetID</p>
+    <p id="wordFormsheetID">word form SheetID</p>
+    <!-- http://127.0.0.1:3001/obsBrowserControls_Remote.html?sheetID=1&formSummary=2&timerForm=3&slideForm=hi&wordForm=4 -->
+<!-- http://127.0.0.1:3001/agenda_Slides_Remote.html?sheetID=1k79hKA-W1FGOSPG6pf2c2AJu7p3uwKcLJk7PnXfQbmI&sheetName=Slides_Table&sheetRange=A1:E&vdoID=gatewaySuper&vdoPW=342567uytjghfds3agenda&googleForm=1FAIpQLSeRTEEHguqYncPIaymN4I_fkBpPKHq-k0On_DPjmQGycMBhLw -->
+
+<script>
+    	
+		// async function vdoMessage(message){
+		// 	console.log(message)
+		// 	console.log(JSON.parse(message.msg))
+		// 	const msg = JSON.parse(JSON.parse(message.msg))
+		// 	console.log("message", typeof msg, msg)
+		// 	console.log("key", Object.keys(msg)[0])
+		// 	if(Object.keys(msg)[0] === 'setColor'){
+		// 		await obs.call("CallVendorRequest", {
+		// 			vendorName: "obs-browser",
+        //             requestType: "emit_event",
+        //             requestData: {
+		// 				event_name: "colorChange",
+        //                 event_data: { msg },
+        //             },
+        //         });
+		// 	}
+			
+		// 	if(Object.keys(msg)[0] === 'setLowerThird'){
+		// 	  changeAgendaItem(msg.setLowerThird);
+		// 	}
+		// }
+
+</script>
+
+</body>
+</html>

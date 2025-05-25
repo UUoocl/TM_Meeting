@@ -3,14 +3,14 @@
 
 <head>
     <meta charset='utf-8'>
-    <title>UUinsone slide controls for MacOS</title>
+    <title>Sheets OBS Controls Settings</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
     <article class="contents">
-        <h1>UUinsome</h1>
+        <h1>Sheets OBS Controls Settings</h1>
         <h4>Configure OBS launch parameters and Browser source settings</h4>
 
         <section>
@@ -145,23 +145,7 @@
 
             await connectOBS(wssDetails)
                 .then(async (result) => {
-                    if (result === 'connected') {
-                        document.getElementById("WSconnectButton").style.background = "#00ff00";
-
-                        //get Browser source details
-                        getOBScollection();
-
-                        //send websocket server connection details to OBS browser sources
-                        await obs.call("CallVendorRequest", {
-                            vendorName: "obs-browser",
-                            requestType: "emit_event",
-                            requestData: {
-                                event_name: "ws-details",
-                                event_data: { wssDetails },
-                            },
-                        });
-                    }
-                    else {
+                    if (result === 'failed') {
                         document.getElementById("WSconnectButton").style.background = "#ff0000";
                     }
                 })
@@ -461,6 +445,26 @@
             return value;
         }
 
+    </script>
+    <script>
+        obs.on('Identified', async (data) => {
+            console.log('OBS WebSocket successfully identified', data);
+
+            document.getElementById("WSconnectButton").style.background = "#00ff00";
+
+            //get Browser source details
+            getOBScollection();
+
+            //send websocket server connection details to OBS browser sources
+            await obs.call("CallVendorRequest", {
+                vendorName: "obs-browser",
+                requestType: "emit_event",
+                requestData: {
+                    event_name: "ws-details",
+                    event_data: { wssDetails },
+                },
+            });
+        });
     </script>
 </body>
 

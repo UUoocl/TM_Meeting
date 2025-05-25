@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form id="convertLink">
+        <label for="link">Enter prefilled form link</label>
+        <input id="link" type="text" name="link">
+        <br>
+        <label for="objectName">Enter a name for the object</label>
+        <input id="objectName" name="objectName" type="text" />
+        <br>
+        <input type="button" value="convert link to object" onclick="prefillToObject()" />
+    </form>
+
+    <p id="output"></p>
+
+    <script>
+        function prefillToObject() {
+            console.log("hi", event)
+            const link = event.srcElement.form["link"].value
+            const objectName = event.srcElement.form["objectName"].value
+            //https://docs.google.com/forms/d/e/1FAIpQLSf6UahPftll4dNmnMAjzTY7UwlyfET70tYg9hEHDqDAWpIlJA/viewform?usp=pp_url&entry.263267029=section&entry.1246307869=name&entry.1415898254=color&entry.816069552=minutes&entry.1740915360=details
+            const urlObject = new URL(link);
+            console.log(urlObject);
+            const searchParams = new URLSearchParams(urlObject.search);
+            console.log(searchParams);
+            //     URL API convert query parameters to keys and values. 
+            window[objectName] = { formID: urlObject.pathname.split('/')[4] };
+            window[objectName].entries = {};
+
+            console.log(window[objectName]);
+            searchParams.forEach((value, key) => {
+                console.log(value, key)
+                window[objectName].entries[value] = { id: key, value: '' }
+                // browserQueryParameterHTML += `
+                // <div class="form-grid-browser-card-div">
+                //     <label for="${browserSources.inputs[i].inputName}-${key}">${key}:</label>
+                //     <input type="text" id="${browserSources.inputs[i].inputName}-${key}" name="${browserSources.inputs[i].inputName}-${key}"  data-key="${key}" value="${value}" />
+                // </div>`
+            });
+            console.log(window[objectName]);
+            document.getElementById("output").innerText = `"${objectName}":${JSON.stringify(window[objectName])})`
+        }
+    </script>
+</body>
+
+</html>

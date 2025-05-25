@@ -6,6 +6,9 @@
             "name": "Agenda Scene"
         },
         {
+            "name": "Word"
+        },
+        {
             "name": "Camera Rear Segment"
         },
         {
@@ -15,7 +18,7 @@
             "name": "Camera Front"
         }
     ],
-    "name": "UUinsome-GH-Test",
+    "name": "UUinsome-gh",
     "groups": [],
     "quick_transitions": [],
     "transitions": [],
@@ -24,7 +27,7 @@
     "transition_duration": 1000,
     "preview_locked": false,
     "scaling_enabled": true,
-    "scaling_level": -14,
+    "scaling_level": -6,
     "scaling_off_x": 0.0,
     "scaling_off_y": 0.0,
     "virtual-camera": {
@@ -32,6 +35,41 @@
         "scene": "Agenda Scene"
     },
     "modules": {
+        "transition-table": {
+            "transitions": [],
+            "enable_hotkey": [],
+            "disable_hotkey": []
+        },
+        "source-dock": {
+            "docks": [],
+            "windows": [],
+            "corner_tl": false,
+            "corner_tr": false,
+            "corner_br": false,
+            "corner_bl": false
+        },
+        "copyTransformHotkey": [],
+        "pasteTransformHotkey": [],
+        "downstream_keyers_channel": 7,
+        "downstream_keyers": [
+            {
+                "name": "DSK 1",
+                "transition": "",
+                "transition_duration": 300,
+                "show_transition": "",
+                "show_transition_duration": 300,
+                "hide_transition": "",
+                "hide_transition_duration": 300,
+                "hide_after": 0,
+                "tie": false,
+                "scenes": [],
+                "scene": "",
+                "null_hotkey": [],
+                "enable_tie_hotkey": [],
+                "disable_tie_hotkey": [],
+                "exclude_scenes": []
+            }
+        ],
         "advanced-scene-switcher": {
             "sceneGroups": [],
             "macros": [
@@ -281,34 +319,7 @@
             "websocketConnections": [],
             "actionQueues": []
         },
-        "auto-scene-switcher": {
-            "interval": 300,
-            "non_matching_scene": "",
-            "switch_if_not_matching": false,
-            "active": false,
-            "switches": []
-        },
-        "copyTransformHotkey": [],
-        "downstream_keyers": [
-            {
-                "name": "DSK 1",
-                "transition": "",
-                "transition_duration": 300,
-                "show_transition": "",
-                "show_transition_duration": 300,
-                "hide_transition": "",
-                "hide_transition_duration": 300,
-                "hide_after": 0,
-                "tie": false,
-                "scenes": [],
-                "scene": "",
-                "null_hotkey": [],
-                "enable_tie_hotkey": [],
-                "disable_tie_hotkey": [],
-                "exclude_scenes": []
-            }
-        ],
-        "downstream_keyers_channel": 7,
+        "scripts-tool": [],
         "output-timer": {
             "streamTimerHours": 0,
             "streamTimerMinutes": 0,
@@ -320,20 +331,12 @@
             "autoStartRecordTimer": false,
             "pauseRecordTimer": false
         },
-        "pasteTransformHotkey": [],
-        "scripts-tool": [],
-        "source-dock": {
-            "docks": [],
-            "windows": [],
-            "corner_tl": false,
-            "corner_tr": false,
-            "corner_br": false,
-            "corner_bl": false
-        },
-        "transition-table": {
-            "transitions": [],
-            "enable_hotkey": [],
-            "disable_hotkey": []
+        "auto-scene-switcher": {
+            "interval": 300,
+            "non_matching_scene": "",
+            "switch_if_not_matching": false,
+            "active": false,
+            "switches": []
         }
     },
     "resolution": {
@@ -345,13 +348,13 @@
         {
             "prev_ver": 520093699,
             "name": "agenda Lower Thirds^",
-            "uuid": "ff809045-41c0-4dbe-9519-48a82a7102cf",
+            "uuid": "5ebcf429-edcf-4668-82f9-453212701fd2",
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
                 "is_local_file": false,
                 "local_file": "/Users/jonwood/Documents/myGithub/TM_Meeting/timer_AgendaLowerThirds.html",
-                "url": "https://uuoocl.github.io/TM_Meeting//timer_AgendaLowerThirds.html?sheetID=1k79hKA-W1FGOSPG6pf2c2AJu7p3uwKcLJk7PnXfQbmI&sheetName=timerTable&sheetRange=A1:D&vdoID=gatewaySuper&vdoPW=342567uytjghfds344444444&googleForm=1FAIpQLSeRTEEHguqYncPIaymN4I_fkBpPKHq-k0On_DPjmQGycMBhLw",
+                "url": "https://uuoocl.github.io/TM_Meeting/timer_AgendaLowerThirds.html?sheetID=1k79hKA-W1FGOSPG6pf2c2AJu7p3uwKcLJk7PnXfQbmI&sheetName=timerTable&sheetRange=A1:D&vdoID=gatewaySuper&vdoPW=342567uytjghfds3timer&googleForm=1FAIpQLSeRTEEHguqYncPIaymN4I_fkBpPKHq-k0On_DPjmQGycMBhLw",
                 "width": 1280,
                 "height": 720
             },
@@ -381,16 +384,71 @@
         {
             "prev_ver": 520093699,
             "name": "Agenda Scene",
-            "uuid": "cf08c7cf-3e66-4088-9973-9e468c67b9e8",
+            "uuid": "c53c142e-f74a-42ab-b1d4-da7f64cab335",
             "id": "scene",
             "versioned_id": "scene",
             "settings": {
+                "id_counter": 45,
                 "custom_size": false,
-                "id_counter": 42,
                 "items": [
                     {
+                        "name": "Color Source",
+                        "source_uuid": "7ea302c0-a61f-4d27-bc71-ab38edd8b92c",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "scale_ref": {
+                            "x": 1920.0,
+                            "y": 1080.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 44,
+                        "group_item_backup": false,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "pos_rel": {
+                            "x": -1.7777777910232544,
+                            "y": -1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_rel": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
                         "name": "BG_Color_Slide",
-                        "source_uuid": "45ccb7e3-790b-45f2-98f2-20847ad5d28c",
+                        "source_uuid": "afc892ac-d142-4c4e-93c8-908fad4a0678",
                         "visible": true,
                         "locked": false,
                         "rot": 0.0,
@@ -409,12 +467,12 @@
                         "id": 39,
                         "group_item_backup": false,
                         "pos": {
-                            "x": -76.0,
-                            "y": -25.0
+                            "x": -73.0,
+                            "y": -27.0
                         },
                         "pos_rel": {
-                            "x": -1.9185185432434082,
-                            "y": -1.046296238899231
+                            "x": -1.9129629135131836,
+                            "y": -1.0499999523162842
                         },
                         "scale": {
                             "x": 1.5968749523162842,
@@ -445,8 +503,8 @@
                     },
                     {
                         "name": "Camera Front",
-                        "source_uuid": "ea7d1586-af28-4abf-b493-878a64a5d0f9",
-                        "visible": true,
+                        "source_uuid": "9a3f88b0-7131-468b-9384-04b4c4c64ec2",
+                        "visible": false,
                         "locked": false,
                         "rot": 0.0,
                         "scale_ref": {
@@ -508,7 +566,7 @@
                     },
                     {
                         "name": "Camera Rear",
-                        "source_uuid": "4a4057d2-c424-4934-a45f-f251f8c35980",
+                        "source_uuid": "0b697f23-45e3-4c71-80d3-8b5bbf432732",
                         "visible": true,
                         "locked": false,
                         "rot": 0.0,
@@ -570,8 +628,8 @@
                         "private_settings": {}
                     },
                     {
-                        "name": "Camera Rear Segment",
-                        "source_uuid": "45b4ed72-2b3b-43d6-b701-efd1520fcc1c",
+                        "name": "agenda Slides^",
+                        "source_uuid": "c136d43c-205b-45ab-b6ec-8398dc2f1fb6",
                         "visible": false,
                         "locked": false,
                         "rot": 0.0,
@@ -584,18 +642,140 @@
                         "bounds_align": 0,
                         "bounds_crop": false,
                         "crop_left": 0,
-                        "crop_top": 120,
-                        "crop_right": 1197,
-                        "crop_bottom": 151,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 43,
+                        "group_item_backup": false,
+                        "pos": {
+                            "x": -1.0,
+                            "y": 142.0
+                        },
+                        "pos_rel": {
+                            "x": -1.7796295881271362,
+                            "y": -0.7370370626449585
+                        },
+                        "scale": {
+                            "x": 1.0296875238418579,
+                            "y": 1.0291666984558105
+                        },
+                        "scale_rel": {
+                            "x": 1.0296875238418579,
+                            "y": 1.0291666984558105
+                        },
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "id": "slide_transition",
+                            "versioned_id": "slide_transition",
+                            "name": "agenda Slides^ Show Transition",
+                            "transition": {
+                                "direction": "right"
+                            },
+                            "duration": 1000
+                        },
+                        "hide_transition": {
+                            "id": "slide_transition",
+                            "versioned_id": "slide_transition",
+                            "name": "agenda Slides Hide Transition",
+                            "transition": {
+                                "direction": "left"
+                            },
+                            "duration": 1000
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "Word",
+                        "source_uuid": "e78f4aac-bcec-4fc1-86ab-9ac3b0e7ee4f",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "scale_ref": {
+                            "x": 1920.0,
+                            "y": 1080.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 45,
+                        "group_item_backup": false,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "pos_rel": {
+                            "x": -1.7777777910232544,
+                            "y": -1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_rel": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "Camera Rear Segment",
+                        "source_uuid": "5b07b991-5c80-4b71-ad51-a2849cf49685",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "scale_ref": {
+                            "x": 1920.0,
+                            "y": 1080.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
                         "id": 32,
                         "group_item_backup": false,
                         "pos": {
-                            "x": 102.0,
-                            "y": 170.0
+                            "x": 104.0,
+                            "y": 63.0
                         },
                         "pos_rel": {
-                            "x": -1.5888888835906982,
-                            "y": -0.68518519401550293
+                            "x": -1.585185170173645,
+                            "y": -0.88333332538604736
                         },
                         "scale": {
                             "x": 0.89166665077209473,
@@ -634,7 +814,7 @@
                     },
                     {
                         "name": "agenda Lower Thirds^",
-                        "source_uuid": "ff809045-41c0-4dbe-9519-48a82a7102cf",
+                        "source_uuid": "5ebcf429-edcf-4668-82f9-453212701fd2",
                         "visible": true,
                         "locked": false,
                         "rot": 0.0,
@@ -714,6 +894,8 @@
             "push-to-talk-delay": 0,
             "hotkeys": {
                 "OBSBasic.SelectScene": [],
+                "libobs.show_scene_item.44": [],
+                "libobs.hide_scene_item.44": [],
                 "libobs.show_scene_item.39": [],
                 "libobs.hide_scene_item.39": [],
                 "libobs.show_scene_item.30": [],
@@ -723,7 +905,45 @@
                 "libobs.show_scene_item.32": [],
                 "libobs.hide_scene_item.32": [],
                 "libobs.show_scene_item.42": [],
-                "libobs.hide_scene_item.42": []
+                "libobs.hide_scene_item.42": [],
+                "libobs.show_scene_item.43": [],
+                "libobs.hide_scene_item.43": [],
+                "libobs.show_scene_item.45": [],
+                "libobs.hide_scene_item.45": []
+            },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 520093699,
+            "name": "agenda Slides^",
+            "uuid": "c136d43c-205b-45ab-b6ec-8398dc2f1fb6",
+            "id": "browser_source",
+            "versioned_id": "browser_source",
+            "settings": {
+                "url": "https://uuoocl.github.io/TM_Meeting/agenda_Slides.html?sheetID=1k79hKA-W1FGOSPG6pf2c2AJu7p3uwKcLJk7PnXfQbmI&sheetName=Slides_Table&sheetRange=A1:E&vdoID=gatewaySuper&vdoPW=342567uytjghfds3agenda1&googleForm=1FAIpQLSeRTEEHguqYncPIaymN4I_fkBpPKHq-k0On_DPjmQGycMBhLw",
+                "width": 1280,
+                "height": 720
+            },
+            "mixers": 255,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {
+                "libobs.mute": [],
+                "libobs.unmute": [],
+                "libobs.push-to-mute": [],
+                "libobs.push-to-talk": [],
+                "ObsBrowser.Refresh": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
@@ -733,7 +953,7 @@
         {
             "prev_ver": 520093699,
             "name": "BG_Color_Slide",
-            "uuid": "45ccb7e3-790b-45f2-98f2-20847ad5d28c",
+            "uuid": "afc892ac-d142-4c4e-93c8-908fad4a0678",
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
@@ -769,16 +989,16 @@
         {
             "prev_ver": 520093699,
             "name": "Camera Front",
-            "uuid": "ea7d1586-af28-4abf-b493-878a64a5d0f9",
+            "uuid": "9a3f88b0-7131-468b-9384-04b4c4c64ec2",
             "id": "scene",
             "versioned_id": "scene",
             "settings": {
-                "custom_size": false,
                 "id_counter": 5,
+                "custom_size": false,
                 "items": [
                     {
                         "name": "Front",
-                        "source_uuid": "8f9f18b6-9f5c-4f3a-84c4-444be650417d",
+                        "source_uuid": "e9d85217-2e72-4ffa-9309-afda1b9ffd65",
                         "visible": false,
                         "locked": false,
                         "rot": 0.0,
@@ -833,7 +1053,7 @@
                     },
                     {
                         "name": "Video Capture Device",
-                        "source_uuid": "fb15692a-8127-4bb2-bcb4-9eab75138765",
+                        "source_uuid": "bf8a06da-baae-40f9-8beb-e80f0a6410c4",
                         "visible": true,
                         "locked": false,
                         "rot": 0.0,
@@ -914,16 +1134,16 @@
         {
             "prev_ver": 520093699,
             "name": "Camera Rear",
-            "uuid": "4a4057d2-c424-4934-a45f-f251f8c35980",
+            "uuid": "0b697f23-45e3-4c71-80d3-8b5bbf432732",
             "id": "scene",
             "versioned_id": "scene",
             "settings": {
+                "id_counter": 9,
                 "custom_size": false,
-                "id_counter": 8,
                 "items": [
                     {
                         "name": "Rear",
-                        "source_uuid": "6be39d5e-c13c-4fa3-ab2d-2174cf97579b",
+                        "source_uuid": "287372f2-3e27-46c0-91d5-31056b868468",
                         "visible": true,
                         "locked": false,
                         "rot": 0.0,
@@ -975,6 +1195,61 @@
                             "duration": 0
                         },
                         "private_settings": {}
+                    },
+                    {
+                        "name": "Video Capture Device 2",
+                        "source_uuid": "c05d1ff8-b7bd-4ad8-8bb2-fee2a33e2034",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "scale_ref": {
+                            "x": 1920.0,
+                            "y": 1080.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 9,
+                        "group_item_backup": false,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "pos_rel": {
+                            "x": -1.7777777910232544,
+                            "y": -1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_rel": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
                     }
                 ]
             },
@@ -992,7 +1267,9 @@
             "hotkeys": {
                 "OBSBasic.SelectScene": [],
                 "libobs.show_scene_item.8": [],
-                "libobs.hide_scene_item.8": []
+                "libobs.hide_scene_item.8": [],
+                "libobs.show_scene_item.9": [],
+                "libobs.hide_scene_item.9": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
@@ -1006,7 +1283,7 @@
                     "id": "gpu_delay",
                     "versioned_id": "gpu_delay",
                     "settings": {
-                        "delay_ms": 120
+                        "delay_ms": 150
                     },
                     "mixers": 0,
                     "sync": 0,
@@ -1030,16 +1307,16 @@
         {
             "prev_ver": 520093699,
             "name": "Camera Rear Segment",
-            "uuid": "45b4ed72-2b3b-43d6-b701-efd1520fcc1c",
+            "uuid": "5b07b991-5c80-4b71-ad51-a2849cf49685",
             "id": "scene",
             "versioned_id": "scene",
             "settings": {
-                "custom_size": false,
                 "id_counter": 1,
+                "custom_size": false,
                 "items": [
                     {
                         "name": "Rear Segment",
-                        "source_uuid": "25a03524-9ff7-423e-b104-046914c93bcd",
+                        "source_uuid": "1dbd29c2-dfa3-4eaf-a2fc-286400215006",
                         "visible": true,
                         "locked": false,
                         "rot": 0.0,
@@ -1117,14 +1394,38 @@
         },
         {
             "prev_ver": 520093699,
+            "name": "Color Source",
+            "uuid": "7ea302c0-a61f-4d27-bc71-ab38edd8b92c",
+            "id": "color_source",
+            "versioned_id": "color_source_v3",
+            "settings": {},
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {},
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 520093699,
             "name": "Front",
-            "uuid": "8f9f18b6-9f5c-4f3a-84c4-444be650417d",
+            "uuid": "e9d85217-2e72-4ffa-9309-afda1b9ffd65",
             "id": "macos-avcapture",
             "versioned_id": "macos-avcapture",
             "settings": {
-                "device_name": "OBSBOT Tiny 2 StreamCamera",
                 "resolution": "{\"width\":0,\"height\":0}",
                 "video_range": 1,
+                "device_name": "OBSBOT Tiny 2 StreamCamera",
                 "device": "0x1100003564fef8",
                 "use_preset": true,
                 "preset": "AVCaptureSessionPreset3840x2160"
@@ -1154,18 +1455,18 @@
         {
             "prev_ver": 520093699,
             "name": "Rear",
-            "uuid": "6be39d5e-c13c-4fa3-ab2d-2174cf97579b",
+            "uuid": "287372f2-3e27-46c0-91d5-31056b868468",
             "id": "macos-avcapture",
             "versioned_id": "macos-avcapture",
             "settings": {
                 "buffering": false,
-                "device_name": "Jon Wood’s iPad",
+                "video_range": 1,
                 "frame_rate": {
-                    "denominator": 0,
-                    "numerator": 0
+                    "numerator": 0.0,
+                    "denominator": 0.0
                 },
                 "resolution": "{\"width\":1552,\"height\":1552}",
-                "video_range": 1,
+                "device_name": "Jon Wood’s iPad",
                 "device": "00008101-001171410A47001E",
                 "use_preset": true,
                 "preset": "AVCaptureSessionPreset3840x2160"
@@ -1195,13 +1496,13 @@
         {
             "prev_ver": 520093699,
             "name": "Rear Segment",
-            "uuid": "25a03524-9ff7-423e-b104-046914c93bcd",
+            "uuid": "1dbd29c2-dfa3-4eaf-a2fc-286400215006",
             "id": "macos-avcapture",
             "versioned_id": "macos-avcapture",
             "settings": {
-                "device_name": "Jon Wood’s iPad",
                 "resolution": "{\"width\":0,\"height\":0}",
                 "video_range": 1,
+                "device_name": "Jon Wood’s iPad",
                 "device": "00008101-001171410A47001E",
                 "use_preset": true,
                 "preset": "AVCaptureSessionPreset3840x2160"
@@ -1236,8 +1537,8 @@
                     "versioned_id": "luma_key_filter_v2",
                     "settings": {
                         "luma_max": 0.88049999999999995,
-                        "luma_min": 0,
-                        "luma_max_smooth": 0
+                        "luma_min": 0.0,
+                        "luma_max_smooth": 0.0
                     },
                     "mixers": 0,
                     "sync": 0,
@@ -1261,7 +1562,7 @@
         {
             "prev_ver": 520093699,
             "name": "Video Capture Device",
-            "uuid": "fb15692a-8127-4bb2-bcb4-9eab75138765",
+            "uuid": "bf8a06da-baae-40f9-8beb-e80f0a6410c4",
             "id": "macos-avcapture",
             "versioned_id": "macos-avcapture",
             "settings": {
@@ -1285,6 +1586,249 @@
                 "libobs.push-to-mute": [],
                 "libobs.push-to-talk": []
             },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 520093699,
+            "name": "Video Capture Device 2",
+            "uuid": "c05d1ff8-b7bd-4ad8-8bb2-fee2a33e2034",
+            "id": "macos-avcapture",
+            "versioned_id": "macos-avcapture",
+            "settings": {
+                "device_name": "OBSBOT Tiny 2 StreamCamera",
+                "device": "0x12000003564fef8"
+            },
+            "mixers": 255,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {
+                "libobs.mute": [],
+                "libobs.unmute": [],
+                "libobs.push-to-mute": [],
+                "libobs.push-to-talk": []
+            },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 520093699,
+            "name": "Word",
+            "uuid": "e78f4aac-bcec-4fc1-86ab-9ac3b0e7ee4f",
+            "id": "scene",
+            "versioned_id": "scene",
+            "settings": {
+                "id_counter": 2,
+                "custom_size": false,
+                "items": [
+                    {
+                        "name": "wordBrowser",
+                        "source_uuid": "19e3c769-e2b6-4db6-8278-7868a7975fa7",
+                        "visible": false,
+                        "locked": false,
+                        "rot": 0.0,
+                        "scale_ref": {
+                            "x": 1920.0,
+                            "y": 1080.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 1,
+                        "group_item_backup": false,
+                        "pos": {
+                            "x": -644.0,
+                            "y": -184.0
+                        },
+                        "pos_rel": {
+                            "x": -2.9703702926635742,
+                            "y": -1.3407406806945801
+                        },
+                        "scale": {
+                            "x": 2.2000000476837158,
+                            "y": 2.2000000476837158
+                        },
+                        "scale_rel": {
+                            "x": 2.2000000476837158,
+                            "y": 2.2000000476837158
+                        },
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "id": "fade_transition",
+                            "versioned_id": "fade_transition",
+                            "name": "wordBrowser Hide Transition",
+                            "transition": {},
+                            "duration": 1000
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "wordText",
+                        "source_uuid": "13395e89-ac68-4fed-9a1b-6fc5d4a1a8fe",
+                        "visible": false,
+                        "locked": false,
+                        "rot": 0.0,
+                        "scale_ref": {
+                            "x": 1920.0,
+                            "y": 1080.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 2,
+                        "group_item_backup": false,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "pos_rel": {
+                            "x": -1.7777777910232544,
+                            "y": -1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_rel": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    }
+                ]
+            },
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {
+                "OBSBasic.SelectScene": [],
+                "libobs.show_scene_item.1": [],
+                "libobs.hide_scene_item.1": [],
+                "libobs.show_scene_item.2": [],
+                "libobs.hide_scene_item.2": []
+            },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 520093699,
+            "name": "wordBrowser",
+            "uuid": "19e3c769-e2b6-4db6-8278-7868a7975fa7",
+            "id": "browser_source",
+            "versioned_id": "browser_source",
+            "settings": {
+                "url": "https://uuoocl.github.io/TM_Meeting/BouncingWaveClient.html",
+                "width": 1280,
+                "height": 720,
+                "shutdown": false,
+                "webpage_control_level": 5
+            },
+            "mixers": 255,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {
+                "libobs.mute": [],
+                "libobs.unmute": [],
+                "libobs.push-to-mute": [],
+                "libobs.push-to-talk": [],
+                "ObsBrowser.Refresh": []
+            },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 520093699,
+            "name": "wordText",
+            "uuid": "13395e89-ac68-4fed-9a1b-6fc5d4a1a8fe",
+            "id": "text_ft2_source",
+            "versioned_id": "text_ft2_source_v2",
+            "settings": {
+                "text": "undefined"
+            },
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {},
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
             "monitoring_type": 0,
