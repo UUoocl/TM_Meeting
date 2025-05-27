@@ -134,16 +134,16 @@
         <script src="lib/getSheetsData.js"></script>
     
     <script>
-        // This initial code is used to listen for messages via VDO.Ninja's iframe API for incoming p2p data.
-        let iframe, gFormID, timerChanged;
-        // Embedding VDO.Ninja iframe for receiving commands
         window.onload = function () {
             const paramsString = window.location.search;
             const searchParams = new URLSearchParams(paramsString);
-            gFormID = searchParams.get("googleForm");
-            timerChanged = searchParams.get("timerChanged");
-            agendaChangedPost.formID = timerChanged;
-             getSheetData();
+        
+            const timerChangedParam = searchParams.get("timerChanged");
+            const submitReportParam = searchParams.get("submitReport");
+            console.log(timerChangedParam, submitReportParam)
+            agendaChangedPost.formID = timerChangedParam;
+            agendaReportPost.formID = submitReportParam;
+            getSheetData();
         };
     </script>
    
@@ -253,6 +253,8 @@
                 console.log("Current Row Variable:",currentTableRow)
                 //table.deselectRow();
                 selectTableRow(currentTableRow+1);
+                agendaChangedPost.entries.color.entryValue = "White";
+                submitGoogleForm(agendaChangedPost);
                 //table.selectRow(table.getRowFromPosition(currentTableRow)); //return row in the visible table datacurrentTableRow);
                 //activate timer?
             }
@@ -284,16 +286,20 @@
                     case (minutes >= timeRed && seconds == 0):
                         console.log("matched red");
                         /* google.script.run.setColor("Red", varNames.indexOf('Color')) */
-                        sendCommandToOBS(`{"setColor": "Red"}`);
+                        agendaChangedPost.entries.color.entryValue = "Red";
+                        submitGoogleForm(agendaChangedPost);
                         break;
-                        case (minutes == timeYellowMinutes && seconds == timeYellowSeconds):
-                            console.log("matched yellow")
-                            sendCommandToOBS(`{"setColor": "Yellow"}`);
+                    case (minutes == timeYellowMinutes && seconds == timeYellowSeconds):
+                        console.log("matched yellow")
+                        agendaChangedPost.entries.color.entryValue = "Yellow";
+                        submitGoogleForm(agendaChangedPost);
                         /* google.script.run.setColor("Yellow", varNames.indexOf('Color')) */
                         break;
                     case (minutes == timeGreen && seconds == 0):
                         console.log("matched green")
-                        sendCommandToOBS(`{"setColor": "Green"}`);
+                        agendaChangedPost.entries.color.entryValue = "Green";
+                        submitGoogleForm(agendaChangedPost);
+                        //sendCommandToOBS(`{"setColor": "Green"}`);
                         /* google.script.run.setColor("Green", varNames.indexOf('Color')) */
                         break;
                 }
@@ -389,11 +395,18 @@
 
 
             setupTimer();
-            document.getElementById('greenButton').onclick = () => { sendCommandToOBS(`{"setColor": "Green"}`)};
-            document.getElementById('yellowButton').onclick = () => { sendCommandToOBS(`{"setColor": "Yellow"}`); };
-            document.getElementById('redButton').onclick = () => { sendCommandToOBS(`{"setColor": "Red"}`); };
-            document.getElementById('whiteButton').onclick = () => { sendCommandToOBS(`{"setColor": "White"}`); };
-
+            document.getElementById('greenButton').onclick = () => {
+                agendaChangedPost.entries.color.entryValue = "Green";
+                submitGoogleForm(agendaChangedPost);}
+            document.getElementById('yellowButton').onclick = () => { 
+                agendaChangedPost.entries.color.entryValue = "Yellow";
+                submitGoogleForm(agendaChangedPost);}
+            document.getElementById('redButton').onclick = () => { 
+                agendaChangedPost.entries.color.entryValue = "Red";
+                submitGoogleForm(agendaChangedPost);}
+            document.getElementById('whiteButton').onclick = () => { 
+                agendaChangedPost.entries.color.entryValue = "White";
+                submitGoogleForm(agendaChangedPost);}
         }
 
         function rowChanged(row) {
@@ -458,6 +471,7 @@
             agendaChangedPost.entries.section.entryValue = varSection;
             agendaChangedPost.entries.name.entryValue = varName;
             agendaChangedPost.entries.minutes.entryValue = varMinutes;
+            agendaChangedPost.entries.color.entryValue = "White";
             //sendCommandToOBS(`{"setLowerThird": ${rowPos-1} }`);
             submitGoogleForm(agendaChangedPost);
         }
@@ -505,8 +519,14 @@
         }
     }
 
-    const agendaReportPost={
-
+    const agendaReportPost = {
+        formID: "",
+        entries: {
+            section: {
+                id: "entry.1973965687",
+                entryValue: localStorage.getItem('timerReport')
+            }
+            }
     };
     
     // function convert prefill link to form object
@@ -564,7 +584,7 @@
 <!-- 
     <button onclick="startBroadcast()">Start Broadcast</button>
     <button onclick="stopBroadcast()">Stop Broadcast</button> -->
-    <button onclick="submitGoogleForm()">Submit Report</button>
+    <button onclick="submitGoogleForm(agendaReportPost)">Submit Report</button>
     <div id="log"></div>
 </body>
 

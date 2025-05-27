@@ -33,7 +33,7 @@
     	
 	<!-- Initialize the presentation -->
 	<script>
-		const startVDO = new CustomEvent("startVDO");
+		let tableData;
 
 		Reveal.initialize({
 			width: 1280,
@@ -53,6 +53,7 @@
 		//called from the script getSheetData.js
 		function loadData(headers, data){
 			createSlides(data);
+			tableData = data;
 		}
 
 		async function createSlides(slidesContent) {
@@ -103,7 +104,6 @@
 
 			console.log("slide creation complete")
 			//Dispatch the start VDO event
-			window.dispatchEvent(startVDO);
 			return;
 		}
 
@@ -118,6 +118,23 @@
 				, 300)		
 			)
 		}
+
+		window.addEventListener(`lowerSectionChange`, function (event) {
+            //section command
+			console.log("message received: ", event)
+			if(event.detail.msg.setSection){
+				console.log(tableData, event.detail.msg.setSection)
+				console.log(tableData.findIndex( (section) => {
+					return section.Section === event.detail.msg.setSection;
+					})
+				)
+				const slideNumber = tableData.findIndex( (section) => {
+					return section.Section === event.detail.msg.setSection;
+					})
+				changeAgendaItem(slideNumber);
+			}
+			
+		})
 
 		async function enableSource(sceneName, sourceName) {
 			//Get the Scene Item Id number

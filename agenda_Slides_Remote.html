@@ -109,69 +109,32 @@ outline: none;
   <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.6.0/dist/js/tabulator.min.js"></script>
   <script src="lib/getSheetsData.js"></script>
   
-  <script id="vdoView">
-        // This initial code is used to listen for messages via VDO.Ninja's iframe API for incoming p2p data.
-        let iframe;
-        // Embedding VDO.Ninja iframe for receiving commands
+  <script>
+    const changeSlideForm = {
+      formID:"",
+      entries:{
+        section:{id:"entry.1378516759",entryValue:""},
+        name:{id:"entry.886155704",entryValue:""},
+        minutes:{id:"entry.27022416",entryValue:""},
+        visibility:{id:"entry.1232816433",entryValue:""},
+        color:{id:"entry.1531689155",entryValue:""}}
+      };
+
+      const changeCameraForm ={
+        formID:"",
+        entries:{
+          camera:{id:"entry.1482521664",entryValue:""}
+        }
+      };
+
+// https://docs.google.com/forms/d/e/1FAIpQLSdvtncfQxMl0xYljK-ET9qfAwmN2EAOtf2aSK85gatgUY_TZw/viewform?usp=pp_url&entry.1482521664=camera
         window.onload = function () {
             const paramsString = window.location.search;
             const searchParams = new URLSearchParams(paramsString);
-
-            let VDO_ID = searchParams.get("vdoID");
-            let VDO_PW = searchParams.get("vdoPW");
-           
-            let FULL_URL = `https://vdo.ninja/?statsinterval=20000&datamode&label=remoteController&view=${VDO_ID}&pw=${VDO_PW}`;
-
-            iframe = document.createElement("iframe");
-            // iframe.src = "https://vdo.ninja/?datamode&password=secret&view=" + streamID +"&label=OBS";
-            iframe.src = FULL_URL;
-            //iframe.style.display = "none"; // Hide the iframe
-            iframe.id = "vdoIframe";
-            document.body.appendChild(iframe);
-
+            changeSlideForm.formID = searchParams.get("slideForm");
+            
             getSheetData();
         };
-    </script>
-
-    <script id="vdoReceive">
-        window.addEventListener("message", function (event) {
-            console.log(event)
-            //if iframe
-            if (event.source !== iframe.contentWindow) {
-                console.log("non vdo event", event)
-                if ("dataReceived" in event.data) {
-            return
-        } // reject messages send from other iframes
-        else {
-            console.log("vdo event", event)
-            // Setup to receive commands from the sender page
-                    var command = event.data.dataReceived;
-                    // Handle the received command (e.g., start or stop broadcast)
-                    // This part will involve sending commands to OBS via WebSocket
-                    console.log("Received command:", command)
-                    // Example: if(command === "startBroadcast") { /* Start OBS broadcast */ }
-                    // You will need to implement WebSocket communication here.
-                    //      sendCommandToOBS(command, {});
-                    document.getElementById("log").innerHTML += "<br />Received command:" + command;
-        }
-        }
-        });
-    </script>
-
-    <script id="vdoSend">
-        function sendCommandToOBS(command) {
-            const iframe = document.getElementById("vdoIframe");
-            if (iframe) {
-                console.log("message to OBS: ", JSON.stringify(command));
-                //iframe.contentWindow.postMessage({ "sendData": command }, '*');
-                iframe.contentWindow.postMessage({"sendChat": JSON.stringify(command)}, '*');
-            }
-        }   
-
-        // Example buttons for starting and stopping a broadcast
-        let messageObj = { "from receiver1": "label?", "item2": "more" }
-        function startBroadcast() { sendCommandToOBS(`${JSON.stringify(messageObj)}`); }
-        function stopBroadcast() { sendCommandToOBS('StopStreaming'); }
     </script>
 
     <script id="load tabulator table">
@@ -252,15 +215,35 @@ outline: none;
             //Button moved selected table row
             table.on("rowSelected", function (row) { rowChanged(row) });
 
+            //background color
+            document.getElementById('greenButton').onclick = () => {
+              changeSlideForm.entries.color.entryValue = "Green";
+              submitGoogleForm(changeSlideForm);}
+            document.getElementById('yellowButton').onclick = () => { 
+              changeSlideForm.entries.color.entryValue = "Yellow";
+              submitGoogleForm(changeSlideForm);}
+            document.getElementById('redButton').onclick = () => { 
+              changeSlideForm.entries.color.entryValue = "Red";
+              submitGoogleForm(changeSlideForm);}
+            document.getElementById('whiteButton').onclick = () => { 
+              changeSlideForm.entries.color.entryValue = "White";
+              submitGoogleForm(changeSlideForm);}
+            
+            //camera  
+            document.getElementById('speakerButton').onclick = () => { 
+              changeCameraForm.entries.camera.entryValue = "Speaker";
+              submitGoogleForm(changeCameraForm);}
+            document.getElementById('audienceButton').onclick = () => { 
+              changeCameraForm.entries.camera.entryValue = "Audience";
+              submitGoogleForm(changeCameraForm);}
 
-            document.getElementById('greenButton').onclick = () => { sendCommandToOBS(`{"setColor": "Green"}`)};
-            document.getElementById('yellowButton').onclick = () => { sendCommandToOBS(`{"setColor": "Yellow"}`); };
-            document.getElementById('redButton').onclick = () => { sendCommandToOBS(`{"setColor": "Red"}`); };
-            document.getElementById('whiteButton').onclick = () => { sendCommandToOBS(`{"setColor": "White"}`); };
-            document.getElementById('speakerButton').onclick = () => { sendCommandToOBS(`{"setCamera": "Speaker"}`); };
-            document.getElementById('audienceButton').onclick = () => { sendCommandToOBS(`{"setCamera": "Audience"}`); };
-            document.getElementById('showSlideButton').onclick = () => { sendCommandToOBS(`{"setSource": "Show"}`); };
-            document.getElementById('hideSlideButton').onclick = () => { sendCommandToOBS(`{"setSource": "Hide"}`); };
+            //slides
+            document.getElementById('showSlideButton').onclick = () => { 
+              sendCommandToOBS(`{"setSource": "Show"}`); };
+            document.getElementById('hideSlideButton').onclick = () => { 
+              sendCommandToOBS(`{"setSource": "Hide"}`); };
+            
+            //word count
             document.getElementById('wordButton').onclick = () => { sendCommandToOBS(`{"setWord": "go"}`); };
             document.getElementById('nextButton').onclick = () => { selectTableRow(currentTableRow+1); };
         }
@@ -273,7 +256,7 @@ outline: none;
             currentTableRow = row.getPosition();
             //change lower third slide to match selected row
             
-            sendCommandToOBS(`{"setSlide": ${currentTableRow-1}}`);
+           submitGoogleForm(slideChangedPost);
         }
 
         function selectTableRow(row) {
@@ -281,6 +264,40 @@ outline: none;
             table.deselectRow();
             table.selectRow(table.getRowFromPosition(row));
         }
+
+        async function submitGoogleForm(formObject) {
+        console.log(formObject)
+        // https://dev.to/utkarshdhiman48/custom-frontend-for-google-form-456l
+        const url = `https://docs.google.com/forms/d/e/${formObject.formID}/formResponse`
+        //const url = `https://docs.google.com/forms/d/e/${gFormID}/formResponse`
+        const formData = await getInputData(formObject);
+        
+        for (const pair of formData.entries()) {
+             console.log(pair[0], pair[1]);
+        }
+
+        fetch(url, {
+            method:'Post',
+            mode:'no-cors',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body: formData,
+            redirect:"follow"
+        })
+            .then((response) => {
+                console.log(response)
+                if (response) {
+                   // alert('Form submitted successfully!');
+                } else {
+                    alert('Error submitting form.');
+                }
+            })
+            .catch((error) => {
+                console.error('There was an error:', error);
+                alert('Network error. Please try again later.');
+            });
+    };
     </script>
 
 <!-- <button onclick="startBroadcast()">Start Broadcast</button>
