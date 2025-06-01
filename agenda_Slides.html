@@ -175,63 +175,21 @@ async function createSlides(slidesContent) {
             });
         }
 
-		async function vdoMessage(message){
-			console.log(message)
-			console.log(JSON.parse(message.msg))
-			const msg = JSON.parse(JSON.parse(message.msg))
-			console.log("message", typeof msg, msg)
-			console.log("key", Object.keys(msg)[0])
-			if(Object.keys(msg)[0] === 'setColor'){
-				await obs.call("CallVendorRequest", {
-					vendorName: "obs-browser",
-                    requestType: "emit_event",
-                    requestData: {
-						event_name: "colorChange",
-                        event_data: { msg },
-                    },
-                });
+
+		window.addEventListener(`SlideChange`, function (event) {
+            //section command
+			console.log("message received: ", event)
+			if(event.detail.msg.setSection){
+				//console.log(tableData, event.detail.msg.setSection)
+				// console.log(tableData.findIndex( (section) => {
+				// 	return section.Section === event.detail.msg.setSection;
+				// 	})
+				// )
+				const slideNumber = event.detail.msg.setSection;
+				changeAgendaItem(slideNumber);
 			}
 			
-			if(Object.keys(msg)[0] === 'setSlide'){
-			  changeAgendaItem(msg.setSlide);
-			}
-
-			if(Object.keys(msg)[0] === 'setSource'){
-                if(msg.setSource === "Hide"){
-                    disableSource('Agenda Scene', 'agenda Slides^')
-                }else{
-                    enableSource('Agenda Scene', 'agenda Slides^')
-                }
-			}
-			
-			if(Object.keys(msg)[0] === 'setCamera'){
-                if(msg.setCamera === "Speaker"){
-                    enableSource('Agenda Scene', 'Camera Rear')
-                    disableSource('Agenda Scene', 'Camera Front')
-                }
-                if(msg.setCamera === "Audience"){
-                    disableSource('Agenda Scene', 'Camera Rear')
-                    enableSource('Agenda Scene', 'Camera Front')
-                }
-			}
-
-            if(Object.keys(msg)[0] === 'setWord'){
-                await obs.call("SetInputSettings", {
-                    inputName: 'wordText',
-                    inputSettings: {
-                        text: '',
-                        //text: "template",
-                    }
-                });
-                await obs.call("SetInputSettings", {
-                    inputName: 'wordText',
-                    inputSettings: {
-                        text: word,
-                        //text: "template",
-                    }
-                });
-			}
-		}
+		})
         console.log("obs status", obs)
 	</script>
 </body>

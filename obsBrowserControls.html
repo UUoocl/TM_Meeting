@@ -17,7 +17,6 @@
 <!-- http://127.0.0.1:3001/agenda_Slides_Remote.html?sheetID=1k79hKA-W1FGOSPG6pf2c2AJu7p3uwKcLJk7PnXfQbmI&sheetName=Slides_Table&sheetRange=A1:E&vdoID=gatewaySuper&vdoPW=342567uytjghfds3agenda&googleForm=1FAIpQLSeRTEEHguqYncPIaymN4I_fkBpPKHq-k0On_DPjmQGycMBhLw -->
 
 
-
 <!-- OBS WebSocket Server -->
 	<script src='lib/obs-ws.js'></script>
     <script src='lib/obsConnect.js'></script>
@@ -90,7 +89,7 @@
                                     const newValues = findChanges(currentDataObj, newDataObj);
                                     console.log("newValues", newValues)
 
-                                    console.log(newDataObj); // Output: { name: 'value', age: 'value', city: 'value' }
+                                    console.log(newDataObj); // Output: 
 
                                     //Color Changed
                                     if (newValues.hasOwnProperty('Color')) {
@@ -131,21 +130,46 @@
                                     }
 
                                     //Change Slide Content
-                                    if (newValues.hasOwnProperty('SlideSection')) {
+                                    if (newValues.hasOwnProperty('SlideNumber')) {
                                         //Transition slides when changing sections
                                         if (currentDataObj.SlideVisibility === "Show" && currentDataObj.Camera === "Speaker") {
-                                            //hide
-                                            disableSource('TM-Timer-App', 'Browser Agenda Slides').then(async () =>
-                                                await setTimeout(() => disableSource('TM-Timer-App', 'Camera Speaker Segment').then(() => { //Show
-                                                    enableSource('TM-Timer-App', 'Browser Agenda Slides')
-                                                    enableSource('TM-Timer-App', 'Camera Speaker Segment')
-                                                }
-                                                ), 300))
+                                           msg = { setSection: newValues.SlideNumber };
+                                           await obs.call("CallVendorRequest", {
+                                               vendorName: "obs-browser",
+                                               requestType: "emit_event",
+                                               requestData: {
+                                                   event_name: "SlideChange",
+                                                   event_data: { msg },
+                                                },
+                                            });
                                         }
 
                                     }
 
-                                    //Change Slide Content
+                                    //Change lower third Content
+                                    if (newValues.hasOwnProperty('lowerThirdSlideNumber')) {
+                                        //Transition slides when changing sections
+                                        //hide
+                                        disableSource('Agenda Scene', 'agenda Lower Thirds^').then(async () =>
+                                            //Show
+                                            {await setTimeout(() => {
+                                                enableSource('Agenda Scene', 'agenda Lower Thirds^')
+                                            }
+                                                , 300);
+                                                msg = { setSection: newValues.lowerThirdSlideNumber };
+                                                await obs.call("CallVendorRequest", {
+                                                vendorName: "obs-browser",
+                                                requestType: "emit_event",
+                                                requestData: {
+                                                    event_name: "lowerSectionChange",
+                                                    event_data: { msg },
+                                                },
+                                            });
+                                            }
+                                        )
+                                    }
+
+                                    //Change lower third Content
                                     if (newValues.hasOwnProperty('TimerSection')) {
                                         //Transition slides when changing sections
                                         //hide

@@ -254,7 +254,8 @@
                 //table.deselectRow();
                 selectTableRow(currentTableRow+1);
                 agendaChangedPost.entries.color.entryValue = "White";
-                submitGoogleForm(agendaChangedPost);
+                
+                //submitGoogleForm(agendaChangedPost);
                 //table.selectRow(table.getRowFromPosition(currentTableRow)); //return row in the visible table datacurrentTableRow);
                 //activate timer?
             }
@@ -284,24 +285,27 @@
                 console.log(minutes, timeGreen, minutes == timeGreen, minutes == timeYellowMinutes)
                 switch (true) {
                     case (minutes >= timeRed && seconds == 0):
-                        console.log("matched red");
-                        /* google.script.run.setColor("Red", varNames.indexOf('Color')) */
-                        agendaChangedPost.entries.color.entryValue = "Red";
-                        submitGoogleForm(agendaChangedPost);
-                        break;
-                    case (minutes == timeYellowMinutes && seconds == timeYellowSeconds):
-                        console.log("matched yellow")
-                        agendaChangedPost.entries.color.entryValue = "Yellow";
-                        submitGoogleForm(agendaChangedPost);
-                        /* google.script.run.setColor("Yellow", varNames.indexOf('Color')) */
-                        break;
-                    case (minutes == timeGreen && seconds == 0):
-                        console.log("matched green")
-                        agendaChangedPost.entries.color.entryValue = "Green";
-                        submitGoogleForm(agendaChangedPost);
-                        //sendCommandToOBS(`{"setColor": "Green"}`);
-                        /* google.script.run.setColor("Green", varNames.indexOf('Color')) */
-                        break;
+                            console.log("matched red");
+                            /* google.script.run.setColor("Red", varNames.indexOf('Color')) */
+                            agendaChangedPost.entries.color.entryValue = "Red";
+                            //submitGoogleForm(agendaChangedPost);
+                            postData({Color: "Red"}, postURL)
+                            break;  
+                        case (minutes == timeYellowMinutes && seconds == timeYellowSeconds):
+                            console.log("matched yellow")
+                            agendaChangedPost.entries.color.entryValue = "Yellow";
+                            // submitGoogleForm(agendaChangedPost);
+                            /* google.script.run.setColor("Yellow", varNames.indexOf('Color')) */
+                            postData({Color: "Yellow"}, postURL)
+                            break;
+                        case (minutes == timeGreen && seconds == 0):
+                            console.log("matched green")
+                            agendaChangedPost.entries.color.entryValue = "Green";
+                            // submitGoogleForm(agendaChangedPost);
+                            //sendCommandToOBS(`{"setColor": "Green"}`);
+                            /* google.script.run.setColor("Green", varNames.indexOf('Color')) */
+                            postData({Color: "Green"}, postURL)
+                            break;
                 }
             }
 
@@ -372,7 +376,6 @@
 
             //Clicked table row
             table.on("rowClick", function (e, row) {
-
                 console.log("e=index", row.getPosition())
                 console.log("e", e)
                 console.log("row", row)
@@ -397,16 +400,20 @@
             setupTimer();
             document.getElementById('greenButton').onclick = () => {
                 agendaChangedPost.entries.color.entryValue = "Green";
-                submitGoogleForm(agendaChangedPost);}
+                postData({Color: "Green"}, postURL);}
+                // submitGoogleForm(agendaChangedPost);}
             document.getElementById('yellowButton').onclick = () => { 
                 agendaChangedPost.entries.color.entryValue = "Yellow";
-                submitGoogleForm(agendaChangedPost);}
+                postData({Color: "Yellow"}, postURL);}
+                // submitGoogleForm(agendaChangedPost);}
             document.getElementById('redButton').onclick = () => { 
                 agendaChangedPost.entries.color.entryValue = "Red";
-                submitGoogleForm(agendaChangedPost);}
+                postData({Color: "Red"}, postURL);}
+                //submitGoogleForm(agendaChangedPost);}
             document.getElementById('whiteButton').onclick = () => { 
                 agendaChangedPost.entries.color.entryValue = "White";
-                submitGoogleForm(agendaChangedPost);}
+                postData({Color: "White"}, postURL);}
+                // submitGoogleForm(agendaChangedPost);}
         }
 
         function rowChanged(row) {
@@ -473,7 +480,9 @@
             agendaChangedPost.entries.minutes.entryValue = varMinutes;
             agendaChangedPost.entries.color.entryValue = "White";
             //sendCommandToOBS(`{"setLowerThird": ${rowPos-1} }`);
-            submitGoogleForm(agendaChangedPost);
+            // submitGoogleForm(agendaChangedPost);
+            postData({Color: "White"}, postURL);
+            postData({lowerThirdSlideNumber: `${rowPos-1}`}, postURL);
         }
 
         function selectTableRow(row) {
@@ -493,6 +502,10 @@
     </script>
 
 <script id="submit Google Form">
+
+//TODO: add post api url to the query parameters
+    const postURL = 'https://script.google.com/macros/s/AKfycbyH2oqEpe-8PTy8tfIbwB8MtpW8qQqH4dY8bmnfHQb559wCwGuSLxA8EZw9GIsSal14/exec'
+
     const agendaChangedPost = {
         formID: "",
         entries:{
@@ -546,6 +559,7 @@
 
         fetch(url, {
             method:'Post',
+            cache: 'no-cache',
             mode:'no-cors',
             headers:{
                 'Content-Type':'application/json'
@@ -579,6 +593,29 @@
         //name attributes to corresponding values
         // dataToPost.append(formObject.entries.section.id, formObject.entries.section.entryValue);
         return dataToPost;
+    }
+
+    //Google Apps Script API Post
+    async function postData(bodyData, fullURL){
+        fetch(fullURL,{
+            method: 'POST',
+            // mode:'no-cors',
+            //cache: 'no-cache',
+            // credentials:'omit',
+            // headers:{
+            //     'Content-Type':'application/json'
+            // },
+            redirect:'follow',
+            body: JSON.stringify(bodyData)
+        })
+        .then(res => res.json())
+        .then(data => {
+            //document.getElementById("postResults").innerText = JSON.stringify(data);
+            //console.log("post called",JSON.parse(data))
+            console.log("post called",data)
+            //console.log("content",JSON.parse(JSON.parse(data).postData.contents))
+            //console.log("content:",Object.keys(JSON.parse(JSON.parse(data).postData.contents))[0])
+        })
     }
 </script>
 <!-- 

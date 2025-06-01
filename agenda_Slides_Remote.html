@@ -110,34 +110,17 @@ outline: none;
   <script src="lib/getSheetsData.js"></script>
   
   <script>
-    const changeSlideForm = {
-      formID:"",
-      entries:{
-        section:{id:"entry.1378516759",entryValue:""},
-        name:{id:"entry.886155704",entryValue:""},
-        minutes:{id:"entry.27022416",entryValue:""},
-        visibility:{id:"entry.1232816433",entryValue:""},
-        color:{id:"entry.1531689155",entryValue:""}}
-      };
-
-      const changeCameraForm ={
-        formID:"",
-        entries:{
-          camera:{id:"entry.1482521664",entryValue:""}
-        }
-      };
-
-// https://docs.google.com/forms/d/e/1FAIpQLSdvtncfQxMl0xYljK-ET9qfAwmN2EAOtf2aSK85gatgUY_TZw/viewform?usp=pp_url&entry.1482521664=camera
-        window.onload = function () {
-            const paramsString = window.location.search;
-            const searchParams = new URLSearchParams(paramsString);
-            changeSlideForm.formID = searchParams.get("slideForm");
-            
-            getSheetData();
+    //TODO: add post api url to the query parameters
+    const postURL = 'https://script.google.com/macros/s/AKfycbyH2oqEpe-8PTy8tfIbwB8MtpW8qQqH4dY8bmnfHQb559wCwGuSLxA8EZw9GIsSal14/exec'
+      window.onload = function () {
+          const paramsString = window.location.search;
+          const searchParams = new URLSearchParams(paramsString);
+          getSheetData();
         };
     </script>
 
     <script id="load tabulator table">
+
       let currentTableRow = 1;
       let word;
         //called from the script getSheetData.js
@@ -217,34 +200,44 @@ outline: none;
 
             //background color
             document.getElementById('greenButton').onclick = () => {
-              changeSlideForm.entries.color.entryValue = "Green";
-              submitGoogleForm(changeSlideForm);}
+                // agendaChangedPost.entries.color.entryValue = "Green";
+                postData({Color: "Green"}, postURL);}
+                // submitGoogleForm(agendaChangedPost);}
             document.getElementById('yellowButton').onclick = () => { 
-              changeSlideForm.entries.color.entryValue = "Yellow";
-              submitGoogleForm(changeSlideForm);}
+                // agendaChangedPost.entries.color.entryValue = "Yellow";
+                postData({Color: "Yellow"}, postURL);}
+                // submitGoogleForm(agendaChangedPost);}
             document.getElementById('redButton').onclick = () => { 
-              changeSlideForm.entries.color.entryValue = "Red";
-              submitGoogleForm(changeSlideForm);}
+                // agendaChangedPost.entries.color.entryValue = "Red";
+                postData({Color: "Red"}, postURL);}
+                //submitGoogleForm(agendaChangedPost);}
             document.getElementById('whiteButton').onclick = () => { 
-              changeSlideForm.entries.color.entryValue = "White";
-              submitGoogleForm(changeSlideForm);}
+                // agendaChangedPost.entries.color.entryValue = "White";
+                postData({Color: "White"}, postURL);}
+                // submitGoogleForm(agendaChangedPost);}
             
             //camera  
             document.getElementById('speakerButton').onclick = () => { 
-              changeCameraForm.entries.camera.entryValue = "Speaker";
-              submitGoogleForm(changeCameraForm);}
-            document.getElementById('audienceButton').onclick = () => { 
-              changeCameraForm.entries.camera.entryValue = "Audience";
-              submitGoogleForm(changeCameraForm);}
-
-            //slides
-            document.getElementById('showSlideButton').onclick = () => { 
-              sendCommandToOBS(`{"setSource": "Show"}`); };
-            document.getElementById('hideSlideButton').onclick = () => { 
-              sendCommandToOBS(`{"setSource": "Hide"}`); };
-            
-            //word count
-            document.getElementById('wordButton').onclick = () => { sendCommandToOBS(`{"setWord": "go"}`); };
+              //changeCameraForm.entries.camera.entryValue = "Speaker";
+              postData({Camera: "Speaker"}, postURL);}
+              // submitGoogleForm(changeCameraForm);}
+              document.getElementById('audienceButton').onclick = () => { 
+                //changeCameraForm.entries.camera.entryValue = "Audience";
+                postData({Camera: "Audience"}, postURL);}
+                // submitGoogleForm(changeCameraForm);}
+                
+                //slides
+                document.getElementById('showSlideButton').onclick = () => { 
+              postData({SlideVisibility: "Show"}, postURL);}
+              // sendCommandToOBS(`{"setSource": "Show"}`); };
+              document.getElementById('hideSlideButton').onclick = () => { 
+              postData({SlideVisibility: "Hide"}, postURL);}
+              // sendCommandToOBS(`{"setSource": "Hide"}`); };
+              
+              //word count
+              document.getElementById('wordButton').onclick = () => { 
+                postData({SlideVisibility: "Hide"}, postURL);}
+                // sendCommandToOBS(`{"setWord": "go"}`); };
             document.getElementById('nextButton').onclick = () => { selectTableRow(currentTableRow+1); };
         }
 
@@ -255,8 +248,8 @@ outline: none;
 
             currentTableRow = row.getPosition();
             //change lower third slide to match selected row
-            
-           submitGoogleForm(slideChangedPost);
+            postData({SlideNumber: `${currentTableRow-1}`}, postURL);
+          //  submitGoogleForm(slideChangedPost);
         }
 
         function selectTableRow(row) {
@@ -298,6 +291,29 @@ outline: none;
                 alert('Network error. Please try again later.');
             });
     };
+
+     //Google Apps Script API Post
+    async function postData(bodyData, fullURL){
+        fetch(fullURL,{
+            method: 'POST',
+            // mode:'no-cors',
+            //cache: 'no-cache',
+            // credentials:'omit',
+            // headers:{
+            //     'Content-Type':'application/json'
+            // },
+            redirect:'follow',
+            body: JSON.stringify(bodyData)
+        })
+        .then(res => res.json())
+        .then(data => {
+            //document.getElementById("postResults").innerText = JSON.stringify(data);
+            //console.log("post called",JSON.parse(data))
+            console.log("post called",data)
+            //console.log("content",JSON.parse(JSON.parse(data).postData.contents))
+            //console.log("content:",Object.keys(JSON.parse(JSON.parse(data).postData.contents))[0])
+        })
+    }
     </script>
 
 <!-- <button onclick="startBroadcast()">Start Broadcast</button>

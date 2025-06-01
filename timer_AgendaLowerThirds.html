@@ -124,13 +124,11 @@
 			console.log("message received: ", event)
 			if(event.detail.msg.setSection){
 				console.log(tableData, event.detail.msg.setSection)
-				console.log(tableData.findIndex( (section) => {
-					return section.Section === event.detail.msg.setSection;
-					})
-				)
-				const slideNumber = tableData.findIndex( (section) => {
-					return section.Section === event.detail.msg.setSection;
-					})
+				// console.log(tableData.findIndex( (section) => {
+				// 	return section.Section === event.detail.msg.setSection;
+				// 	})
+				// )
+				const slideNumber = event.detail.msg.setSection;
 				changeAgendaItem(slideNumber);
 			}
 			
