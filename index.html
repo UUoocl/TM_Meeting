@@ -65,10 +65,28 @@
             </div>
             </div>
         </section>
+        <section>
+            <div id="collectionDetails">
+                <h3></h3>OBS Collection</h3>
+                <div id="obsCollection"></div>
+
+            </div>
+            </div>
+        </section>
+        
+        <section>
+            <div id="collectionTabulatorFormat">
+                <h3></h3>OBS Collection Tabulator Format</h3>
+                <div id="obsCollectionTabulator"></div>
+
+            </div>
+            </div>
+        </section>
     </article>
 
     <script src='lib/obs-ws.js'></script>
     <script src='lib/obsConnect.js'></script>
+    <script src='lib/obsCollectionCopy.js'></script>
     <script>
         let wssDetails, configName;
         let configMap = new Map();
@@ -295,6 +313,16 @@
 
             }
             getBrowserSource();
+            document.getElementById("obsCollection").innerHTML =`
+            <pre><code>${JSON.stringify(collection,null,2)}</code></pre>
+            `;
+            
+            makeTabulatorData();
+            document.getElementById("obsCollectionTabulator").innerHTML =`
+            <pre><code>${JSON.stringify(collectionTabulator,null,4)}</code></pre>
+            `;
+
+
         }
 
         async function getBrowserSource() {
