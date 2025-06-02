@@ -317,7 +317,7 @@
             <pre><code>${JSON.stringify(collection,null,2)}</code></pre>
             `;
             
-            makeTabulatorData();
+            await makeTabulatorData();
             document.getElementById("obsCollectionTabulator").innerHTML =`
             <pre><code>${JSON.stringify(collectionTabulator,null,4)}</code></pre>
             `;
@@ -495,6 +495,10 @@
                 },
             });
         });
+    </script>
+
+    <script>
+        //TODO post obs collection (tabulator and sheet version) to google sheet
     </script>
 </body>
 
