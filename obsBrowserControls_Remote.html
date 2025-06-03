@@ -504,7 +504,8 @@
 <script id="submit Google Form">
 
 //TODO: add post api url to the query parameters
-    const postURL = 'https://script.google.com/macros/s/AKfycbyH2oqEpe-8PTy8tfIbwB8MtpW8qQqH4dY8bmnfHQb559wCwGuSLxA8EZw9GIsSal14/exec'
+    const postURL = 'https://script.google.com/macros/s/AKfycbyL9BhuoWicHl1Q6JRN_Vu0vJBS95q8V29Fp5W7piXk5uWz8QWXJzmANblC9AZ1HCG32Q/exec'
+    // const postURL = 'https://script.google.com/macros/s/AKfycbyH2oqEpe-8PTy8tfIbwB8MtpW8qQqH4dY8bmnfHQb559wCwGuSLxA8EZw9GIsSal14/exec'
 
     const agendaChangedPost = {
         formID: "",
@@ -601,7 +602,7 @@
         const seconds = now.getSeconds();
         console.log(seconds);   
         bodyData.now = `${now.getMinutes()}:${now.getSeconds()}`;
-        bodyData.row = seconds;
+        bodyData.row = 1 + seconds;
         fetch(fullURL,{
             method: 'POST',
             // mode:'no-cors',
